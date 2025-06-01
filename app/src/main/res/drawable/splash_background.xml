@@ -1,0 +1,12 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 纯色或渐变背景（和 WelcomeCompose 一致） -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#6A11CB"
+                android:endColor="#2575FC"
+                android:type="linear"
+                android:angle="90" />
+        </shape>
+    </item>
+</layer-list>
