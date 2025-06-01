@@ -4,10 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.clife.librarygo.compose.HomeCompose
+import com.clife.librarygo.compose.AdminLoginCompose
 import com.clife.librarygo.compose.LoginCompose
-import com.clife.librarygo.compose.RegisterCompose
 import com.clife.librarygo.compose.WelcomeCompose
+import com.clife.librarygo.compose.HomeCompose
+import com.clife.librarygo.compose.RegisterCompose
 
 @Composable
 fun LibraryNavGraph(
@@ -29,5 +30,9 @@ fun LibraryNavGraph(
         composable(Routes.REGISTER) {
             RegisterCompose(navController = navController)
         }
+        composable(Routes.LOGIN_ADMIN) {
+            AdminLoginCompose(navController = navController)
+        }
+
     }
 }
