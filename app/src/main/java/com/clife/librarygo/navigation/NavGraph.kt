@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.clife.librarygo.compose.HomeCompose
 import com.clife.librarygo.compose.LoginCompose
 import com.clife.librarygo.compose.WelcomeCompose
 
@@ -20,6 +21,9 @@ fun LibraryNavGraph(
         }
         composable(Routes.LOGIN) {
             LoginCompose(navController = navController)
+        }
+        composable(Routes.HOME) {
+            HomeCompose(navController = navController)
         }
     }
 }

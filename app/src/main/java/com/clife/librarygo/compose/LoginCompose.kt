@@ -145,7 +145,9 @@ fun LoginCompose(
                     Icon(
                         imageVector = if (passwordVisible.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                         contentDescription = "切换密码可见性",
-                        modifier = Modifier.clickable { passwordVisible.value = !passwordVisible.value }
+                        modifier = Modifier.clickable {
+                            passwordVisible.value = !passwordVisible.value
+                        }
                     )
                 },
                 colors = TextFieldDefaults.colors(
@@ -158,7 +160,7 @@ fun LoginCompose(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { /* Handle login */ },
+                onClick = { viewModel.login(username.value, password.value) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -199,7 +201,8 @@ fun LoginCompose(
                 text = "管理员登录",
                 color = Color(0xFF2575FC),
                 fontSize = 14.sp,
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier
+                    .align(Alignment.End)
                     .clickable {
                         // 跳转到管理员登录页面
                         navController.navigate(Routes.LOGIN_ADMIN)
