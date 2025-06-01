@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.clife.librarygo.compose.HomeCompose
 import com.clife.librarygo.compose.LoginCompose
+import com.clife.librarygo.compose.RegisterCompose
 import com.clife.librarygo.compose.WelcomeCompose
 
 @Composable
@@ -24,6 +25,9 @@ fun LibraryNavGraph(
         }
         composable(Routes.HOME) {
             HomeCompose(navController = navController)
+        }
+        composable(Routes.REGISTER) {
+            RegisterCompose(navController = navController)
         }
     }
 }
