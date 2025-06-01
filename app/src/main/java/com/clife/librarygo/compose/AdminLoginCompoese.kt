@@ -26,6 +26,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +50,7 @@ import com.clife.librarygo.R
 import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
 import com.clife.librarygo.viewmodel.AdminLoginViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AdminLoginCompose(
@@ -60,6 +62,12 @@ fun AdminLoginCompose(
     var passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
 
     val loginError by viewModel.loginError.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.navigateTo.collectLatest { route ->
+            navController.navigate(route)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -86,7 +94,7 @@ fun AdminLoginCompose(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "图书借阅管理系统",
+                text = "管理员登录",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2575FC)
@@ -96,7 +104,7 @@ fun AdminLoginCompose(
                 value = adminName.value,
                 onValueChange = { newValue ->
                     adminName.value = newValue
-                    //错误信息清除
+                    if (loginError != null) viewModel.clearLoginError()
                 },
                 label = { Text("管理员") },
                 modifier = Modifier.fillMaxWidth(),
@@ -144,7 +152,7 @@ fun AdminLoginCompose(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { /* Handle login */ },
+                onClick = { viewModel.login(adminName.value, password.value) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
