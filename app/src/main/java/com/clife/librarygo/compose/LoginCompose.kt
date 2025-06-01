@@ -2,6 +2,7 @@ package com.clife.librarygo.compose
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,9 +18,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -52,7 +54,6 @@ import com.clife.librarygo.viewmodel.LoginViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginCompose(
     navController: NavController,
@@ -60,7 +61,7 @@ fun LoginCompose(
 ) {
     var username = remember { mutableStateOf("") }
     var password = remember { mutableStateOf("") }
-    var passwordVisible = remember { mutableStateOf(false) }
+    var passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
 
     val loginError by viewModel.loginError.collectAsState()
 
@@ -92,30 +93,24 @@ fun LoginCompose(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Logo or App Icon
             Image(
-                painter = painterResource(id = R.drawable.logo), // 使用导入的 R
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "App Logo",
                 modifier = Modifier.size(80.dp)
             )
-
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Title
             Text(
                 text = "图书借阅管理系统",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2575FC)
             )
-
             Spacer(modifier = Modifier.height(32.dp))
-
             OutlinedTextField(
                 value = username.value,
                 onValueChange = { newValue ->
                     username.value = newValue
-                    if (loginError != null) viewModel.clearLoginError() // 用户输入时清除错误
+                    if (loginError != null) viewModel.clearLoginError()
                 },
                 label = { Text("用户名") },
                 modifier = Modifier.fillMaxWidth(),
@@ -129,23 +124,29 @@ fun LoginCompose(
                     focusedLabelColor = Color(0xFF2575FC),
                     cursorColor = Color(0xFF2575FC)
                 ),
-                isError = loginError != null // 如果有错误信息，标记输入框为错误状态
+                isError = loginError != null
             )
             Spacer(modifier = Modifier.height(16.dp))
-            // Username Field
             OutlinedTextField(
-                value = password.value,
+                value = password.value,//文本字段的当前值
                 onValueChange = { newValue ->
                     password.value = newValue
-                    if (loginError != null) viewModel.clearLoginError() // 用户输入时清除错误
-                },
+                    if (loginError != null) viewModel.clearLoginError()
+                },//当值改变时的回调
                 label = { Text("密码") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
+                singleLine = true,//是否单行文本
                 visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 leadingIcon = {
                     Icon(Icons.Filled.Lock, contentDescription = "Password Icon")
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = if (passwordVisible.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        contentDescription = "切换密码可见性",
+                        modifier = Modifier.clickable { passwordVisible.value = !passwordVisible.value }
+                    )
                 },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color(0xFF2575FC),
@@ -153,12 +154,9 @@ fun LoginCompose(
                     focusedLabelColor = Color(0xFF2575FC),
                     cursorColor = Color(0xFF2575FC)
                 ),
-                isError = loginError != null // 如果有错误信息，标记输入框为错误状态
+                isError = loginError != null
             )
-
             Spacer(modifier = Modifier.height(24.dp))
-
-            // Login Button
             Button(
                 onClick = { /* Handle login */ },
                 modifier = Modifier
@@ -172,9 +170,7 @@ fun LoginCompose(
             ) {
                 Text(text = "登录", fontSize = 16.sp)
             }
-
             Spacer(modifier = Modifier.height(16.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -183,20 +179,31 @@ fun LoginCompose(
                     text = "没有账号? 立即注册",
                     color = Color(0xFF2575FC),
                     fontSize = 14.sp,
+                    modifier = Modifier.clickable {
+                        // 处理注册点击事件
+                        navController.navigate(Routes.REGISTER)
+                    }
                 )
                 Text(
                     text = "忘记密码?",
                     color = Color(0xFF2575FC),
                     fontSize = 14.sp,
+                    modifier = Modifier.clickable {
+                        // 跳转到找回密码页面
+                        navController.navigate(Routes.RETRIEVE_PASSWORD)
+                    }
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-
             Text(
                 text = "管理员登录",
                 color = Color(0xFF2575FC),
                 fontSize = 14.sp,
                 modifier = Modifier.align(Alignment.End)
+                    .clickable {
+                        // 跳转到管理员登录页面
+                        navController.navigate(Routes.LOGIN_ADMIN)
+                    }
             )
         }
     }

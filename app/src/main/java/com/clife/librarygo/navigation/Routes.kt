@@ -4,5 +4,8 @@ package com.clife.librarygo.navigation
 object Routes {
     const val WELCOME = "welcome"
     const val LOGIN = "login"
+    const val LOGIN_ADMIN = "login_admin"
     const val HOME = "home"
+    const val REGISTER = "register"
+    const val RETRIEVE_PASSWORD = "retrieve password"
 }
