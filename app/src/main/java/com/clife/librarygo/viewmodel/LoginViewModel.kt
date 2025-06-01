@@ -19,25 +19,16 @@ class LoginViewModel : ViewModel() {
     val loginError = _loginError.asStateFlow()
 
     // 模拟的登录逻辑
-    fun login(username: String, password: String) {
+    fun login(username: String, password: String): Boolean {
         viewModelScope.launch {
-            // 清除之前的错误信息
-            _loginError.value = null
-
-            // 简单的硬编码凭据检查
-            if (username == "admin" && password == "password") {
-                // 登录成功，导航到主页
-                // 假设你有一个 Routes.HOME 定义
-                _navigateTo.emit(Routes.HOME)
-            } else if (username == "user" && password == "123") {
-                // 另一个有效用户示例
-                _navigateTo.emit(Routes.HOME)
-            }
-            else {
-                // 登录失败
+            _loginError.value = null// 清除之前的错误信息
+            if (username == "admin" && password == "password") {// 简单的硬编码凭据检查
+                _navigateTo.emit(Routes.HOME)// 登录成功，导航到主页
+            } else {// 登录失败
                 _loginError.value = "用户名或密码错误"
             }
         }
+        return _loginError.value == null // 返回登录是否成功
     }
 
     // 用于清除错误信息，例如当用户开始重新输入时
