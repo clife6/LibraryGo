@@ -1,4 +1,4 @@
-package com.clife.librarygo.date.local.entity
+package com.clife.librarygo.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

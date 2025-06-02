@@ -1,6 +1,5 @@
 package com.clife.librarygo.compose
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -73,14 +71,6 @@ fun LoginCompose(
                 popUpTo(Routes.LOGIN) { inclusive = true }
                 launchSingleTop = true
             }
-        }
-    }
-
-    // 监听登录错误信息
-    val context = LocalContext.current
-    LaunchedEffect(loginError) {
-        loginError?.let { error ->
-            Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -167,6 +157,14 @@ fun LoginCompose(
                 ),
                 isError = loginError != null
             )
+            if (loginError != null) {
+                Text(
+                    text = loginError ?: "登录失败",
+                    color = Color.Red,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { viewModel.login(username.value, password.value) },

@@ -1,4 +1,4 @@
-package com.clife.librarygo.date.local.dao
+package com.clife.librarygo.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.clife.librarygo.date.local.entity.UserEntity
+import com.clife.librarygo.data.local.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
