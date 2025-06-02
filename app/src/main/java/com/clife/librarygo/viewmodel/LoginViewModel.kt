@@ -1,9 +1,6 @@
 package com.clife.librarygo.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.clife.librarygo.data.local.AppDatabase
 import com.clife.librarygo.navigation.Routes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,9 +8,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class LoginViewModel(application: Application) : AndroidViewModel(application){
-    // 获取UserDao实例
-    val userDao= AppDatabase.getInstance(application).getUserDao()
+class LoginViewModel : androidx.lifecycle.ViewModel() {
+
     // 用于触发导航事件
     private val _navigateTo = MutableSharedFlow<String>()
     val navigateTo = _navigateTo.asSharedFlow()
@@ -24,7 +20,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application){
     fun login(username: String, password: String): Boolean {
         viewModelScope.launch {
             _loginError.value = null
-            if(userDao.checkCredentials(username, password)) {
+            if(username!= "admin" || password != "123456") {
                 _navigateTo.emit(Routes.HOME)
             } else {
                 _loginError.value = "用户名或密码错误"

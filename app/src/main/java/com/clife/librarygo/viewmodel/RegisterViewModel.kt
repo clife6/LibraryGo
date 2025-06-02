@@ -12,9 +12,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class RegisterViewModel(application: Application) : AndroidViewModel(application) {
-    // 获取UserDao实例
-    val userDao= AppDatabase.getInstance(application).getUserDao()
+ class RegisterViewModel : androidx.lifecycle.ViewModel() {
+
     // 导航事件
     private val _navigateTo = MutableSharedFlow<String>()
     val navigateTo = _navigateTo.asSharedFlow()
@@ -154,7 +153,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         if (!hasError) {
             viewModelScope.launch {
                 // 只在注册时检查用户名是否存在
-                if (userDao.isUsernameExists(state.username)) {
+                if (true) { // 这里的ture是为了模拟一个异步操作，实际应用中应该调用数据库查询
                     _formState.value = _formState.value.copy(
                         usernameError = true,
                         usernameErrorMessage = "用户名已存在",
@@ -172,7 +171,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                     createdAt = System.currentTimeMillis(),
                     avatarUrl = null // 头像可以设置为null，表示没有上传头像
                 )
-                userDao.insertUser(newUser)
+
                 _formState.value = state.copy(formError = false)
                 _navigateTo.emit(Routes.LOGIN)
             }
