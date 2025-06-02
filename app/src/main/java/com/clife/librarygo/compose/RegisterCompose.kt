@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -26,6 +28,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,18 +52,35 @@ import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
 import com.clife.librarygo.viewmodel.RegisterViewModel
 
+
+
 @Composable
 fun RegisterCompose(
     navController: NavController,
     viewModel: RegisterViewModel = viewModel()
 ){
+    // 输入状态
     var username = remember { mutableStateOf("") }
     var password = remember { mutableStateOf("") }
     var confirmPassword = remember { mutableStateOf("") }
+    var email = remember { mutableStateOf("") }
+    var phoneNumber = remember { mutableStateOf("") }
 
-    var passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
+    // 可见性控制
+    var passwordVisible = remember { mutableStateOf(false) }
+    var confirmPasswordVisible = remember { mutableStateOf(false) }
 
-//    val loginError by viewModel.loginError.collectAsState()
+    // 错误状态
+    var passwordError = remember { mutableStateOf(false) }
+    var passwordErrorMessage = remember { mutableStateOf("") }
+    var emailError = remember { mutableStateOf(false) }
+    var emailErrorMessage = remember { mutableStateOf("") }
+    var phoneError = remember { mutableStateOf(false) }
+    var phoneErrorMessage = remember { mutableStateOf("") }
+    var formError = remember { mutableStateOf(false) }
+
+    // 从ViewModel收集错误状态
+    val registerError by viewModel.registerError.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -89,10 +110,11 @@ fun RegisterCompose(
                 color = Color(0xFF2575FC)
             )
             Spacer(modifier = Modifier.height(16.dp))
+            //用户名输入框
             OutlinedTextField(
                 value = username.value,
                 onValueChange = {
-                    password.value = it
+                    username.value = it
                 },//未完成
                 label = { Text("用户名") },
                 modifier = Modifier.fillMaxWidth(),
@@ -107,11 +129,64 @@ fun RegisterCompose(
                     cursorColor = Color(0xFF2575FC)
                 ),
             )
+            //电子邮箱输入框
             Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = email.value,
+                onValueChange = {
+                    email.value = it
+                },//未完成
+                label = { Text("电子邮箱") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                leadingIcon = {
+                    Icon(Icons.Filled.Email, contentDescription = "Email Icon")
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color(0xFF2575FC),
+                    unfocusedIndicatorColor = Color.LightGray,
+                    focusedLabelColor = Color(0xFF2575FC),
+                    cursorColor = Color(0xFF2575FC)
+                ),
+            )
+            //电话号码输入框
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = phoneNumber.value,
+                onValueChange = {
+                    // 限制只能输入数字
+                    if (it.all { char -> char.isDigit() }) {
+                        phoneNumber.value = it
+                        // 实时验证电话号码格式
+                        validatePhoneNumber(phoneNumber.value).let {
+                            phoneError.value = it.first
+                            phoneErrorMessage.value = it.second
+                        }
+                    }
+                },//未完成
+                label = { Text("电话号码") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                leadingIcon = {
+                    Icon(Icons.Filled.Phone, contentDescription = "Phone Icon")
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color(0xFF2575FC),
+                    unfocusedIndicatorColor = Color.LightGray,
+                    focusedLabelColor = Color(0xFF2575FC),
+                    cursorColor = Color(0xFF2575FC)
+                ),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            //密码输入框
             OutlinedTextField(
                 value = password.value,
                 onValueChange = {
                     password.value = it
+                    checkPasswordMatch(password.value, confirmPassword.value).let {
+                        passwordError.value = it.first
+                        passwordErrorMessage.value = it.second
+                    }
                 },//未完成
                 label = { Text("密码") },
                 modifier = Modifier.fillMaxWidth(),
@@ -136,16 +211,21 @@ fun RegisterCompose(
                 ),
             )
             Spacer(modifier = Modifier.height(16.dp))
+            //确认密码输入框
             OutlinedTextField(
                 value = confirmPassword.value,
                 onValueChange = {
                     confirmPassword.value = it
-
+                    // 检查密码是否匹配
+                    checkPasswordMatch(password.value, confirmPassword.value).let {
+                        passwordError.value = it.first
+                        passwordErrorMessage.value = it.second
+                    }
                 },//未完成
                 label = { Text("确认密码")},
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,//是否单行文本
-                visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (confirmPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
 
                 leadingIcon = {
@@ -153,21 +233,37 @@ fun RegisterCompose(
                 },
                 trailingIcon = {
                     Icon(
-                        imageVector = if (passwordVisible.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        imageVector = if (confirmPasswordVisible.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                         contentDescription = "切换密码可见性",
-                        modifier = Modifier.clickable { passwordVisible.value = !passwordVisible.value }
+                        modifier = Modifier.clickable { confirmPasswordVisible.value = !confirmPasswordVisible.value }
                     )
                 },
+                //错误时红色高亮
                 colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color(0xFF2575FC),
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedLabelColor = Color(0xFF2575FC),
-                    cursorColor = Color(0xFF2575FC)
+                    focusedIndicatorColor = if (passwordError.value) Color.Red else Color(0xFF2575FC),
+                    unfocusedIndicatorColor = if (passwordError.value) Color.Red else Color.LightGray,
+                    focusedLabelColor = if (passwordError.value) Color.Red else Color(0xFF2575FC),
+                    cursorColor = if (passwordError.value) Color.Red else Color(0xFF2575FC)
                 ),
+                isError = passwordError.value
             )
+            //错误提示
+            if (passwordError.value) {
+                Text(
+                    text = passwordErrorMessage.value,
+                    color = Color.Red,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { navController.navigate(Routes.LOGIN_ADMIN) },//需实现账号创建逻辑
+                onClick = {
+                    viewModel.register(username.value,password.value)
+                    navController.navigate(Routes.LOGIN)
+},//需实现账号创建逻辑
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -194,6 +290,56 @@ fun RegisterCompose(
     }
 }
 
+
+// 检查密码是否匹配的辅助函数
+private fun checkPasswordMatch(password: String, confirmPassword: String): Pair<Boolean, String> {
+    return when {
+        password.isEmpty() && confirmPassword.isEmpty() ->
+            false to ""
+
+        password != confirmPassword ->
+            true to "两次输入的密码不一致"
+
+        password.length < 6 ->
+            true to "密码长度至少为6位"
+
+        else ->
+            false to ""
+    }
+}
+// 检查email是否正确的辅助函数
+private fun validateEmail(email: String): Pair<Boolean, String> {
+    return when {
+        email.isEmpty() ->
+            true to "邮箱不能为空"
+
+        !email.contains("@") ->
+            true to "邮箱格式不正确，缺少@符号"
+
+        email.split("@").last().isEmpty() ||
+                !email.split("@").last().contains(".") ->
+            true to "邮箱格式不正确"
+
+        else ->
+            false to ""
+    }
+}
+// 检查电话号码是否正确的辅助函数
+private fun validatePhoneNumber(phone: String): Pair<Boolean, String> {
+    return when {
+        phone.isEmpty() ->
+            true to "电话号码不能为空"
+
+        phone.length != 11 ->
+            true to "电话号码必须是11位数字"
+
+        !phone.all { it.isDigit() } ->
+            true to "电话号码必须为纯数字"
+
+        else ->
+            false to ""
+    }
+}
 
 @Preview(
     showBackground = true,
