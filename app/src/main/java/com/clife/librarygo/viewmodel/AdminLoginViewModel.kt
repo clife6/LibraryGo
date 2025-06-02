@@ -24,9 +24,10 @@ class AdminLoginViewModel : ViewModel()  {
         viewModelScope.launch {
             // 清除之前的错误信息
             _loginError.value = null
-
-            // 简单的硬编码凭据检查
-            if (adminName == "admin" && password == "admin") {
+            if (adminName == "" || password == ""){
+                _loginError.value = "管理员账号或密码不能为空"
+            }
+            else if (adminName == "admin" && password == "admin") {
                 // 登录成功，导航到主页
                 // 假设你有一个 Routes.HOME 定义
                 _navigateTo.emit(Routes.HOME)

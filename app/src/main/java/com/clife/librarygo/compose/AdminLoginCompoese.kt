@@ -150,6 +150,16 @@ fun AdminLoginCompose(
                 ),
                 isError = loginError != null
             )
+            if (loginError != null) {
+                Text(
+                    text = loginError ?: "",
+                    color = Color.Red,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .align(Alignment.Start)
+                )
+            }
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { viewModel.login(adminName.value, password.value) },

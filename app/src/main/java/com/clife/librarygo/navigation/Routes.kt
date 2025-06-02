@@ -9,5 +9,5 @@ object Routes {
     const val REGISTER = "register"
     const val RETRIEVE_PASSWORD = "retrieve password"
     const val SET_NEW_PASSWORD = "set_new_password"
-    fun setNewPasswordWithUuid(uuid: String) = "$SET_NEW_PASSWORD/$uuid"
+    fun setNewPasswordWithId(id: String) = "$SET_NEW_PASSWORD/$id"
 }

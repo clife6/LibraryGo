@@ -42,13 +42,13 @@ fun LibraryNavGraph(
             RetrievePasswordCompose(navController = navController)
         }
         composable(
-            "${Routes.SET_NEW_PASSWORD}/{uuid}",
-            arguments = listOf(navArgument("uuid") { type = NavType.StringType })
+            "${Routes.SET_NEW_PASSWORD}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
-            val uuid = backStackEntry.arguments?.getString("uuid") ?: ""
+            val id = backStackEntry.arguments?.getString("id") ?: ""
             SetNewPasswordCompose(
                 navController = navController,
-                uuid = uuid  // 传递非空参数
+                id = id  // 传递非空参数
             )
         }
     }

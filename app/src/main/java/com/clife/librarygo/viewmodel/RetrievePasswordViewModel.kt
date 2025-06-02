@@ -21,11 +21,14 @@ class RetrievePasswordViewModel : ViewModel()   {
     fun verifyAccount(userEmail : String,userPhone : String) {
         viewModelScope.launch{
             _retrievePasswordError.value = null
-            val uuid = "12345" //getUserUuidByEmailAndPhone(userEmail, userPhone)
-            if (uuid != null)//检查账号信息是否匹配
+            val id = "12345" //getUserIdByEmailAndPhone(userEmail, userPhone)
+            if(userEmail == "" || userPhone == "") {
+                _retrievePasswordError.value = "邮箱或手机号不能为空"
+            }
+            else if (id != null)//检查账号信息是否匹配
             {
                 // 假设验证通过，导航到设置新密码界面
-                _navigateTo.emit(Routes.setNewPasswordWithUuid(uuid))
+                _navigateTo.emit(Routes.setNewPasswordWithId(id))
             } else {
                 // 验证失败，设置错误信息
                 _retrievePasswordError.value = "账号信息不匹配，请检查"

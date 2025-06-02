@@ -17,7 +17,7 @@ class SetNewPasswordViewModel : ViewModel() {
     private val _setNewPasswordError = MutableStateFlow<String?>(null)
     val setNewPasswordError = _setNewPasswordError.asStateFlow()
 
-    fun setNewPassword(uuid: String, newPassword: String, confirmPassword: String) {
+    fun setNewPassword(id: String, newPassword: String, confirmPassword: String) {
         viewModelScope.launch{
             _setNewPasswordError.value = null
             // 简单的密码匹配检查

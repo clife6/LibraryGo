@@ -54,7 +54,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SetNewPasswordCompose(
     navController: NavController,
-    uuid: String,
+    id: String,
     viewModel: SetNewPasswordViewModel = viewModel(),
 ){
     val newPassword = remember { mutableStateOf("") }
@@ -177,7 +177,7 @@ fun SetNewPasswordCompose(
             }
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { viewModel.setNewPassword(uuid,newPassword.value,confirmPassword.value) },
+                onClick = { viewModel.setNewPassword(id,newPassword.value,confirmPassword.value) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
