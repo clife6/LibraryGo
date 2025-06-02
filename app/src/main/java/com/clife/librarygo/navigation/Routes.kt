@@ -8,4 +8,5 @@ object Routes {
     const val HOME = "home"
     const val REGISTER = "register"
     const val RETRIEVE_PASSWORD = "retrieve password"
+    const val SET_NEW_PASSWORD = "set_new_password/{uuid}"
 }

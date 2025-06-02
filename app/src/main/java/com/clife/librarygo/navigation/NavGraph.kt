@@ -9,6 +9,7 @@ import com.clife.librarygo.compose.LoginCompose
 import com.clife.librarygo.compose.WelcomeCompose
 import com.clife.librarygo.compose.HomeCompose
 import com.clife.librarygo.compose.RegisterCompose
+import com.clife.librarygo.compose.RetrievePasswordCompose
 
 @Composable
 fun LibraryNavGraph(
@@ -33,6 +34,8 @@ fun LibraryNavGraph(
         composable(Routes.LOGIN_ADMIN) {
             AdminLoginCompose(navController = navController)
         }
-
+        composable(Routes.RETRIEVE_PASSWORD) {
+            RetrievePasswordCompose(navController = navController)
+        }
     }
 }
