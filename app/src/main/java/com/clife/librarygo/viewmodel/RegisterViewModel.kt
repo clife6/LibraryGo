@@ -15,7 +15,7 @@ class RegisterViewModel : ViewModel(){
     private val _registerError = MutableStateFlow<String?>(null)
     val registerError = _registerError.asStateFlow()
 
-    fun register(username: String, password: String){
+    fun register(username: String, password: String,email: String,phone: String){
 
     }
 }

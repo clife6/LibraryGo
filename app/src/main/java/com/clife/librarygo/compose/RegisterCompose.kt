@@ -64,7 +64,7 @@ fun RegisterCompose(
     var password = remember { mutableStateOf("") }
     var confirmPassword = remember { mutableStateOf("") }
     var email = remember { mutableStateOf("") }
-    var phoneNumber = remember { mutableStateOf("") }
+    var phone = remember { mutableStateOf("") }
 
     // 可见性控制
     var passwordVisible = remember { mutableStateOf(false) }
@@ -135,6 +135,11 @@ fun RegisterCompose(
                 value = email.value,
                 onValueChange = {
                     email.value = it
+                    // 实时验证邮箱格式
+                    validateEmail(email.value).let {
+                        emailError.value = it.first
+                        emailErrorMessage.value = it.second
+                    }
                 },//未完成
                 label = { Text("电子邮箱") },
                 modifier = Modifier.fillMaxWidth(),
@@ -143,27 +148,38 @@ fun RegisterCompose(
                     Icon(Icons.Filled.Email, contentDescription = "Email Icon")
                 },
                 colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color(0xFF2575FC),
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedLabelColor = Color(0xFF2575FC),
-                    cursorColor = Color(0xFF2575FC)
+                    focusedIndicatorColor = if (emailError.value) Color.Red else Color(0xFF2575FC),
+                    unfocusedIndicatorColor = if (emailError.value) Color.Red else Color.LightGray,
+                    focusedLabelColor = if (emailError.value) Color.Red else Color(0xFF2575FC),
+                    cursorColor = if (emailError.value) Color.Red else Color(0xFF2575FC)
                 ),
+                isError = emailError.value
             )
+            //邮箱错误提示
+            if (emailError.value) {
+                Text(
+                    text = emailErrorMessage.value,
+                    color = Color.Red,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                )
+            }
             //电话号码输入框
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = phoneNumber.value,
+                value = phone.value,
                 onValueChange = {
                     // 限制只能输入数字
                     if (it.all { char -> char.isDigit() }) {
-                        phoneNumber.value = it
+                        phone.value = it
                         // 实时验证电话号码格式
-                        validatePhoneNumber(phoneNumber.value).let {
+                        validatePhoneNumber(phone.value).let {
                             phoneError.value = it.first
                             phoneErrorMessage.value = it.second
                         }
                     }
-                },//未完成
+                },
                 label = { Text("电话号码") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -171,12 +187,23 @@ fun RegisterCompose(
                     Icon(Icons.Filled.Phone, contentDescription = "Phone Icon")
                 },
                 colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color(0xFF2575FC),
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedLabelColor = Color(0xFF2575FC),
-                    cursorColor = Color(0xFF2575FC)
+                    focusedIndicatorColor = if (phoneError.value) Color.Red else Color(0xFF2575FC),
+                    unfocusedIndicatorColor = if (phoneError.value) Color.Red else Color.LightGray,
+                    focusedLabelColor = if (phoneError.value) Color.Red else Color(0xFF2575FC),
+                    cursorColor = if (phoneError.value) Color.Red else Color(0xFF2575FC)
                 ),
+                isError = phoneError.value
             )
+            //电话号码错误提示
+            if (phoneError.value) {
+                Text(
+                    text = phoneErrorMessage.value,
+                    color = Color.Red,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
             //密码输入框
             OutlinedTextField(
@@ -187,7 +214,7 @@ fun RegisterCompose(
                         passwordError.value = it.first
                         passwordErrorMessage.value = it.second
                     }
-                },//未完成
+                },
                 label = { Text("密码") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,//是否单行文本
@@ -221,7 +248,7 @@ fun RegisterCompose(
                         passwordError.value = it.first
                         passwordErrorMessage.value = it.second
                     }
-                },//未完成
+                },
                 label = { Text("确认密码")},
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,//是否单行文本
@@ -261,17 +288,31 @@ fun RegisterCompose(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    viewModel.register(username.value,password.value)
-                    navController.navigate(Routes.LOGIN)
-},//需实现账号创建逻辑
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF2575FC),
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(8.dp)
+                    // 提交前验证所有字段
+                    val emailValidation = validateEmail(email.value)
+                    val phoneValidation = validatePhoneNumber(phone.value)
+                    val passwordValidation = checkPasswordMatch(password.value, confirmPassword.value)
+
+                    emailError.value = emailValidation.first
+                    phoneError.value = phoneValidation.first
+                    passwordError.value = passwordValidation.first
+
+                    formError.value = emailError.value || phoneError.value || passwordError.value
+
+                    if (!formError.value) {
+                        // 调用注册逻辑
+                        viewModel.register(
+                            username = username.value,
+                            password = password.value,
+                            email = email.value,
+                            phone = phone.value
+                        )
+                        // 导航到登录页面
+                        navController.navigate(Routes.LOGIN) {
+                            popUpTo(Routes.REGISTER) { inclusive = true }
+                        }
+                    }
+                }
             ) {
                 Text(text = "注册", fontSize = 16.sp)
             }
