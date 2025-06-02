@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class RegisterViewModel : ViewModel(){
     // 用于触发导航事件
     private val _navigateTo = MutableSharedFlow<String>()
-    val navigateTo = _navigateTo.asSharedFlow()
+//    val navigateTo = _navigateTo.asSharedFlow()
 
     // 用于显示注册错误信息
     private val _registerError = MutableStateFlow<String?>(null)

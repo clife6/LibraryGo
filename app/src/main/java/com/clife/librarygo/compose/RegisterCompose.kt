@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -80,7 +79,7 @@ fun RegisterCompose(
     var formError = remember { mutableStateOf(false) }
 
     // 从ViewModel收集错误状态
-    val registerError by viewModel.registerError.collectAsState()
+    // val registerError by viewModel.registerError.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize()
