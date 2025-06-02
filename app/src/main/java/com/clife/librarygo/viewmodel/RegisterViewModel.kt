@@ -1,9 +1,6 @@
 package com.clife.librarygo.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.clife.librarygo.data.local.AppDatabase
 import com.clife.librarygo.data.local.entity.UserEntity
 import com.clife.librarygo.navigation.Routes
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -161,16 +158,16 @@ import kotlinx.coroutines.launch
                     )
                     return@launch //@launch是协程的作用域，表示在这个作用域内执行的代码
                 }
-                val newUser = UserEntity(
-                    id = 0,
-                    username = state.username,
-                    password = state.password,
-                    email = state.email,
-                    phone = state.phone,
-                    role = "user",
-                    createdAt = System.currentTimeMillis(),
-                    avatarUrl = null // 头像可以设置为null，表示没有上传头像
-                )
+//                val newUser = UserEntity(
+//                    id = 0,
+//                    username = state.username,
+//                    password = state.password,
+//                    email = state.email,
+//                    phone = state.phone,
+//                    role = "user",
+//                    createdAt = System.currentTimeMillis(),
+//                    avatarUrl = null // 头像可以设置为null，表示没有上传头像
+//                )
 
                 _formState.value = state.copy(formError = false)
                 _navigateTo.emit(Routes.LOGIN)
