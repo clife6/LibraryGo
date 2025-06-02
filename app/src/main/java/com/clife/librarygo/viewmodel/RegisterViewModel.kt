@@ -1,7 +1,6 @@
 package com.clife.librarygo.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.clife.librarygo.data.local.entity.UserEntity
 import com.clife.librarygo.navigation.Routes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
