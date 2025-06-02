@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL = "http://10.163.47.162:5000/"  // 确保手机和电脑在同一网络
+    private const val BASE_URL = "http://10.10.16.12:5050/"
     private const val TIMEOUT = 15L // 超时时间(秒)
 
     private val okHttpClient by lazy {
