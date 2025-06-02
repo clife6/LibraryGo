@@ -57,9 +57,9 @@ fun AdminLoginCompose(
     navController: NavController,
     viewModel: AdminLoginViewModel = viewModel(),
 ){
-    var adminName = remember { mutableStateOf("") }
-    var password = remember { mutableStateOf("") }
-    var passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
+    val adminName = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
+    val passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
 
     val loginError by viewModel.loginError.collectAsState()
 
