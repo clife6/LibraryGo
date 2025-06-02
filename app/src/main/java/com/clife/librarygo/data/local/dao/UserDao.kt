@@ -43,4 +43,8 @@ interface UserDao {
 
     @Query("SELECT * FROM user WHERE email = :email")
     suspend fun getUserByEmail(email: String): UserEntity?
+
+    //检查用户账号与密码是否匹配
+    @Query("SELECT EXISTS(SELECT 1 FROM user WHERE username = :username AND password = :password)")
+    suspend fun checkCredentials(username: String, password: String): Boolean // 返回凭证是否匹配
 }
