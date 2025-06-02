@@ -37,9 +37,12 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 
 # Testing
+converter-gson = { module = "com.squareup.retrofit2:converter-gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android" }
+retrofit = { module = "com.squareup.retrofit2:retrofit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

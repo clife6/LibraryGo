@@ -1,15 +1,17 @@
 package com.clife.librarygo.viewmodel
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clife.librarygo.data.RetrofitClient
 import com.clife.librarygo.navigation.Routes
+
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class LoginViewModel : androidx.lifecycle.ViewModel() {
-
+class LoginViewModel() : ViewModel(){
     // 用于触发导航事件
     private val _navigateTo = MutableSharedFlow<String>()
     val navigateTo = _navigateTo.asSharedFlow()
@@ -20,10 +22,20 @@ class LoginViewModel : androidx.lifecycle.ViewModel() {
     fun login(username: String, password: String): Boolean {
         viewModelScope.launch {
             _loginError.value = null
-            if(username!= "admin" || password != "123456") {
-                _navigateTo.emit(Routes.HOME)
-            } else {
-                _loginError.value = "用户名或密码错误"
+            try {
+                val response = RetrofitClient.userService.searchUser(username)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if(it.code == 1){
+                            _navigateTo.emit(Routes.HOME) // 登录成功，导航到主页
+                        }
+                    }
+                } else {
+                    // 登录失败，设置错误信息
+                    _loginError.value = "用户名或密码错误"
+                }
+            } catch (e: Exception) {
+                _loginError.value = "登录失败: ${e.message}"
             }
         }
         return _loginError.value == null // 返回登录是否成功
