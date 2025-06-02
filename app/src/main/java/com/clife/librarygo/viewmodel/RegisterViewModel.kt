@@ -1,7 +1,10 @@
 package com.clife.librarygo.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.clife.librarygo.data.local.AppDatabase
+import com.clife.librarygo.data.local.entity.UserEntity
 import com.clife.librarygo.navigation.Routes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,7 +12,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class RegisterViewModel : ViewModel() {
+class RegisterViewModel(application: Application) : AndroidViewModel(application) {
+    // 获取UserDao实例
+    val userDao= AppDatabase.getInstance(application).getUserDao()
     // 导航事件
     private val _navigateTo = MutableSharedFlow<String>()
     val navigateTo = _navigateTo.asSharedFlow()
@@ -21,6 +26,8 @@ class RegisterViewModel : ViewModel() {
         val confirmPassword: String = "",
         val email: String = "",
         val phone: String = "",
+        val usernameError: Boolean = false,
+        val usernameErrorMessage: String = "",
         val passwordVisible: Boolean = false,
         val confirmPasswordVisible: Boolean = false,
         val passwordError: Boolean = false,
@@ -32,8 +39,8 @@ class RegisterViewModel : ViewModel() {
         val formError: Boolean = false
     )
 
-    private val _formState = MutableStateFlow(RegisterFormState())
-    val formState = _formState.asStateFlow()
+    private val _formState = MutableStateFlow(RegisterFormState())//MutableStateFlow是一个可变的状态流，用于存储表单状态
+    val formState = _formState.asStateFlow()//asStateFlow()将MutableStateFlow转换为不可变的状态流，供外部观察
 
     // 更新表单字段
     fun updateUsername(username: String) {
@@ -146,7 +153,27 @@ class RegisterViewModel : ViewModel() {
         _formState.value = state.copy(formError = hasError)
         if (!hasError) {
             viewModelScope.launch {
-                // 这里可以调用实际注册API
+                // 只在注册时检查用户名是否存在
+                if (userDao.isUsernameExists(state.username)) {
+                    _formState.value = _formState.value.copy(
+                        usernameError = true,
+                        usernameErrorMessage = "用户名已存在",
+                        formError = true
+                    )
+                    return@launch //@launch是协程的作用域，表示在这个作用域内执行的代码
+                }
+                val newUser = UserEntity(
+                    id = 0,
+                    username = state.username,
+                    password = state.password,
+                    email = state.email,
+                    phone = state.phone,
+                    role = "user",
+                    createdAt = System.currentTimeMillis(),
+                    avatarUrl = null // 头像可以设置为null，表示没有上传头像
+                )
+                userDao.insertUser(newUser)
+                _formState.value = state.copy(formError = false)
                 _navigateTo.emit(Routes.LOGIN)
             }
         }

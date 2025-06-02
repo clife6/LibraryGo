@@ -82,12 +82,22 @@ fun RegisterCompose(
                 singleLine = true,
                 leadingIcon = { Icon(Icons.Filled.Person, contentDescription = "用户名图标") },
                 colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color(0xFF2575FC),
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedLabelColor = Color(0xFF2575FC),
-                    cursorColor = Color(0xFF2575FC)
-                )
+                    focusedIndicatorColor = if (formState.usernameError) Color.Red else Color(0xFF2575FC),
+                    unfocusedIndicatorColor = if (formState.usernameError) Color.Red else Color.LightGray,
+                    focusedLabelColor = if (formState.usernameError) Color.Red else Color(0xFF2575FC),
+                    cursorColor = if (formState.usernameError) Color.Red else Color(0xFF2575FC)
+                ),
+                isError = formState.usernameError
             )
+            if (formState.usernameError) {
+                Text(
+                    text = formState.usernameErrorMessage,
+                    color = Color.Red,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                )
+            }
             // 邮箱
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
@@ -204,7 +214,7 @@ fun RegisterCompose(
             }
             if (formState.formError) {
                 Text(
-                    text = "请检查表单中的错误",
+                    text = "请检查您是否输入有误",
                     color = Color.Red,
                     modifier = Modifier
                         .fillMaxWidth()

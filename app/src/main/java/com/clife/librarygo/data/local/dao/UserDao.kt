@@ -11,40 +11,15 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: UserEntity): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUsers(users: List<UserEntity>)
-
-    @Update
-    suspend fun updateUser(user: UserEntity)
-
-    @Delete
-    suspend fun deleteUser(user: UserEntity)
-
-    @Query("DELETE FROM user WHERE id = :userId")
-    suspend fun deleteUserById(userId: Long)
-
-    @Query("SELECT * FROM user")
-    fun getAllUsers(): Flow<List<UserEntity>>
-
-    @Query("SELECT * FROM user WHERE id = :userId")
-    suspend fun getUserById(userId: Long): UserEntity?
-
-    @Query("SELECT * FROM user WHERE username = :username")
-    suspend fun getUserByUsername(username: String): UserEntity?
-
-    @Query("SELECT * FROM user WHERE username = :username AND password = :password")
-    suspend fun login(username: String, password: String): UserEntity?
-
-    @Query("SELECT COUNT(*) FROM user")
-    suspend fun getUserCount(): Int
-
-    @Query("SELECT * FROM user WHERE email = :email")
-    suspend fun getUserByEmail(email: String): UserEntity?
-
     //检查用户账号与密码是否匹配
     @Query("SELECT EXISTS(SELECT 1 FROM user WHERE username = :username AND password = :password)")
     suspend fun checkCredentials(username: String, password: String): Boolean // 返回凭证是否匹配
+
+    //检查注册用户名是否已存在
+    @Query("SELECT EXISTS(SELECT 1 FROM user WHERE username = :username)")
+    suspend fun isUsernameExists(username: String): Boolean // 返回用户名是否已存在
+
+    //插入新用户，返回是否成功
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertUser(user: UserEntity): Long // 返回新用户的ID，如果插入失败则返回-1
 }
