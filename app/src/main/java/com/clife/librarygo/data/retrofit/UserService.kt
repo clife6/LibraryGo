@@ -1,7 +1,9 @@
 package com.clife.librarygo.data.retrofit
 
+import com.clife.librarygo.data.entity.SetNewPasswordRequest
 import com.clife.librarygo.data.response.UserResponse
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -21,7 +23,6 @@ interface UserService {
     //设置新的密码
     @POST("/user/setNewPassword")
     suspend fun setNewPassword(
-        @Query("id") id: String,
-        @Query("newPassword") newPassword: String
+        @Body request: SetNewPasswordRequest
     ): Response<UserResponse.SetNewPasswordResponse>
 }

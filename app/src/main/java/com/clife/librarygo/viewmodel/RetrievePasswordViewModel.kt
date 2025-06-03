@@ -34,7 +34,7 @@ class RetrievePasswordViewModel : ViewModel()   {
                             _navigateTo.emit(Routes.setNewPasswordWithId(it.id.toString()))
                         }else if (it.code == 0) {
                             // 账户不存在，设置错误信息
-                            _retrievePasswordError.value = "未查询到账户，请检查邮箱或手机号是否正确"
+                            _retrievePasswordError.value = "未查询到邮箱和手机号绑定一致的账户，请检查邮箱或手机号是否正确"
                         } else if (it.code == -1) {
                             // 其他错误，设置错误信息
                             _retrievePasswordError.value = "账户查询失败"

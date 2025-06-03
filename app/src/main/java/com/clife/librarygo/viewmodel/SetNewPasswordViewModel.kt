@@ -3,6 +3,7 @@ package com.clife.librarygo.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clife.librarygo.data.RetrofitClient
+import com.clife.librarygo.data.entity.SetNewPasswordRequest
 import com.clife.librarygo.navigation.Routes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +28,7 @@ class SetNewPasswordViewModel : ViewModel() {
                 return@launch
             }
             try {
-                val response = RetrofitClient.userService.setNewPassword(id, newPassword)
+                val response = RetrofitClient.userService.setNewPassword(SetNewPasswordRequest(id, newPassword))
                 if (response.isSuccessful){
                     response.body()?.let {
                         if (it.code == 1) {

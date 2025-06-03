@@ -68,7 +68,10 @@ fun SetNewPasswordCompose(
 
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collectLatest { route ->
-            navController.navigate(route)
+            navController.navigate(route) {
+                popUpTo(Routes.SET_NEW_PASSWORD) { inclusive = true }
+                launchSingleTop = true
+            }
         }
     }
 

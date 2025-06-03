@@ -61,7 +61,10 @@ fun RetrievePasswordCompose(
 
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collectLatest { route ->
-            navController.navigate(route)
+            navController.navigate(route) {
+                popUpTo(Routes.RETRIEVE_PASSWORD) { inclusive = true }
+                launchSingleTop = true
+            }
         }
     }
 

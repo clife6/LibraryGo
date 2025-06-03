@@ -65,7 +65,10 @@ fun AdminLoginCompose(
 
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collectLatest { route ->
-            navController.navigate(route)
+            navController.navigate(route) {
+                popUpTo(Routes.LOGIN_ADMIN) { inclusive = true }
+                launchSingleTop = true
+            }
         }
     }
 
