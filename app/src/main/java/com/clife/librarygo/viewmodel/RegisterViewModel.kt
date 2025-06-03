@@ -3,7 +3,6 @@ package com.clife.librarygo.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.clife.librarygo.data.RetrofitClient
 import com.clife.librarygo.data.entity.UserRequest
-import com.clife.librarygo.data.response.UserResponse
 import com.clife.librarygo.navigation.Routes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
