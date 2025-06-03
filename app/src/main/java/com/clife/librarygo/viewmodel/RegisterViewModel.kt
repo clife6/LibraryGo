@@ -1,6 +1,9 @@
 package com.clife.librarygo.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.clife.librarygo.data.RetrofitClient
+import com.clife.librarygo.data.entity.UserRequest
+import com.clife.librarygo.data.response.UserResponse
 import com.clife.librarygo.navigation.Routes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,167 +13,219 @@ import kotlinx.coroutines.launch
 
  class RegisterViewModel : androidx.lifecycle.ViewModel() {
 
-    // 导航事件
-    private val _navigateTo = MutableSharedFlow<String>()
-    val navigateTo = _navigateTo.asSharedFlow()
+     // 导航事件
+     private val _navigateTo = MutableSharedFlow<String>()
+     val navigateTo = _navigateTo.asSharedFlow()
 
-    // 表单状态
-    data class RegisterFormState(
-        val username: String = "",
-        val password: String = "",
-        val confirmPassword: String = "",
-        val email: String = "",
-        val phone: String = "",
-        val usernameError: Boolean = false,
-        val usernameErrorMessage: String = "",
-        val passwordVisible: Boolean = false,
-        val confirmPasswordVisible: Boolean = false,
-        val passwordError: Boolean = false,
-        val passwordErrorMessage: String = "",
-        val emailError: Boolean = false,
-        val emailErrorMessage: String = "",
-        val phoneError: Boolean = false,
-        val phoneErrorMessage: String = "",
-        val formError: Boolean = false
-    )
+     // 表单状态
+     data class RegisterFormState(
+         val username: String = "",
+         val password: String = "",
+         val confirmPassword: String = "",
+         val email: String = "",
+         val phone: String = "",
+         val usernameError: Boolean = false,
+         val usernameErrorMessage: String = "",
+         val passwordVisible: Boolean = false,
+         val confirmPasswordVisible: Boolean = false,
+         val passwordError: Boolean = false,
+         val passwordErrorMessage: String = "",
+         val emailError: Boolean = false,
+         val emailErrorMessage: String = "",
+         val phoneError: Boolean = false,
+         val phoneErrorMessage: String = "",
+         val formError: Boolean = false, // 表单是否有错误
+         val registerError: Boolean = false, // 是否有注册错误
+         val registerErrorMessage: String = "" // 注册错误信息
+     )
 
-    private val _formState = MutableStateFlow(RegisterFormState())//MutableStateFlow是一个可变的状态流，用于存储表单状态
-    val formState = _formState.asStateFlow()//asStateFlow()将MutableStateFlow转换为不可变的状态流，供外部观察
+     private val _formState =
+         MutableStateFlow(RegisterFormState())//MutableStateFlow是一个可变的状态流，用于存储表单状态
+     val formState = _formState.asStateFlow()//asStateFlow()将MutableStateFlow转换为不可变的状态流，供外部观察
 
-    // 更新表单字段
-    fun updateUsername(username: String) {
-        _formState.value = _formState.value.copy(username = username)
-    }
+     // 更新表单字段
+     // 更新用户名
+     fun updateUsername(username: String) {
+         _formState.value = _formState.value.copy(username = username)
+     }
 
-    fun updatePassword(password: String) {
-        _formState.value = _formState.value.copy(
-            password = password,
-            passwordError = false,
-            passwordErrorMessage = ""
-        )
-        validatePasswords()
-    }
+     // 更新密码和确认密码
+     fun updatePassword(password: String) {
+         _formState.value = _formState.value.copy(
+             password = password,
+             passwordError = false,
+             passwordErrorMessage = ""
+         )
+         validatePasswords()
+     }
 
-    fun updateConfirmPassword(confirmPassword: String) {
-        _formState.value = _formState.value.copy(
-            confirmPassword = confirmPassword,
-            passwordError = false,
-            passwordErrorMessage = ""
-        )
-        validatePasswords()
-    }
+     // 更新确认密码
+     fun updateConfirmPassword(confirmPassword: String) {
+         _formState.value = _formState.value.copy(
+             confirmPassword = confirmPassword,
+             passwordError = false,
+             passwordErrorMessage = ""
+         )
+         validatePasswords()
+     }
 
-    fun updateEmail(email: String) {
-        _formState.value = _formState.value.copy(
-            email = email,
-            emailError = false,
-            emailErrorMessage = ""
-        )
-        validateEmail()
-    }
+     // 更新邮箱
+     fun updateEmail(email: String) {
+         _formState.value = _formState.value.copy(
+             email = email,
+             emailError = false,
+             emailErrorMessage = ""
+         )
+         validateEmail()
+     }
 
-    fun updatePhone(phone: String) {
-        if (phone.all { it.isDigit() }) {
-            _formState.value = _formState.value.copy(
-                phone = phone,
-                phoneError = false,
-                phoneErrorMessage = ""
-            )
-            validatePhone()
-        }
-    }
+     // 更新手机号
+     fun updatePhone(phone: String) {
+         if (phone.all { it.isDigit() }) {
+             _formState.value = _formState.value.copy(
+                 phone = phone,
+                 phoneError = false,
+                 phoneErrorMessage = ""
+             )
+             validatePhone()
+         }
+     }
 
-    fun togglePasswordVisibility() {
-        _formState.value = _formState.value.copy(
-            passwordVisible = !_formState.value.passwordVisible
-        )
-    }
+     // 切换密码的可见性
+     fun togglePasswordVisibility() {
+         _formState.value = _formState.value.copy(
+             passwordVisible = !_formState.value.passwordVisible
+         )
+     }
 
-    fun toggleConfirmPasswordVisibility() {
-        _formState.value = _formState.value.copy(
-            confirmPasswordVisible = !_formState.value.confirmPasswordVisible
-        )
-    }
+     // 切换确认密码的可见性
+     fun toggleConfirmPasswordVisibility() {
+         _formState.value = _formState.value.copy(
+             confirmPasswordVisible = !_formState.value.confirmPasswordVisible
+         )
+     }
 
-    // 校验逻辑
-    private fun validatePasswords() {
-        val state = _formState.value
-        val result = when {
-            state.password.isEmpty() && state.confirmPassword.isEmpty() ->
-                false to ""
-            state.password != state.confirmPassword ->
-                true to "两次输入的密码不一致"
-            state.password.length < 6 ->
-                true to "密码长度至少为6位"
-            else -> false to ""
-        }
-        _formState.value = state.copy(
-            passwordError = result.first,
-            passwordErrorMessage = result.second
-        )
-    }
+     // 校验逻辑
+     // 校验密码和确认密码
+     private fun validatePasswords() {
+         val state = _formState.value
+         val result = when {
+             state.password.isEmpty() && state.confirmPassword.isEmpty() ->
+                 false to ""
 
-    private fun validateEmail() {
-        val email = _formState.value.email
-        val result = when {
-            email.isEmpty() -> true to "邮箱不能为空"
-            !email.contains("@") -> true to "邮箱格式不正确，缺少@符号"
-            email.split("@").last().isEmpty() || !email.split("@").last().contains(".") -> true to "邮箱格式不正确"
-            else -> false to ""
-        }
-        _formState.value = _formState.value.copy(
-            emailError = result.first,
-            emailErrorMessage = result.second
-        )
-    }
+             state.password != state.confirmPassword ->
+                 true to "两次输入的密码不一致"
 
-    private fun validatePhone() {
-        val phone = _formState.value.phone
-        val result = when {
-            phone.isEmpty() -> true to "电话号码不能为空"
-            phone.length != 11 -> true to "电话号码必须是11位数字"
-            !phone.all { it.isDigit() } -> true to "电话号码必须为纯数字"
-            else -> false to ""
-        }
-        _formState.value = _formState.value.copy(
-            phoneError = result.first,
-            phoneErrorMessage = result.second
-        )
-    }
+             state.password.length < 6 ->
+                 true to "密码长度至少为6位"
 
-    // 注册逻辑
-    fun register() {
-        validatePasswords()
-        validateEmail()
-        validatePhone()
-        val state = _formState.value
-        val hasError = state.passwordError || state.emailError || state.phoneError
-        _formState.value = state.copy(formError = hasError)
-        if (!hasError) {
-            viewModelScope.launch {
-                // 只在注册时检查用户名是否存在
-                if (true) { // 这里的ture是为了模拟一个异步操作，实际应用中应该调用数据库查询
-                    _formState.value = _formState.value.copy(
-                        usernameError = true,
-                        usernameErrorMessage = "用户名已存在",
-                        formError = true
-                    )
-                    return@launch //@launch是协程的作用域，表示在这个作用域内执行的代码
-                }
-//                val newUser = UserEntity(
-//                    id = 0,
-//                    username = state.username,
-//                    password = state.password,
-//                    email = state.email,
-//                    phone = state.phone,
-//                    role = "user",
-//                    createdAt = System.currentTimeMillis(),
-//                    avatarUrl = null // 头像可以设置为null，表示没有上传头像
-//                )
+             else -> false to ""
+         }
+         _formState.value = state.copy(
+             passwordError = result.first,
+             passwordErrorMessage = result.second
+         )
+     }
 
-                _formState.value = state.copy(formError = false)
-                _navigateTo.emit(Routes.LOGIN)
-            }
-        }
-    }
-}
+     // 校验邮箱
+     private fun validateEmail() {
+         val email = _formState.value.email
+         val result = when {
+             email.isEmpty() -> true to "邮箱不能为空"
+             !email.contains("@") -> true to "邮箱格式不正确，缺少@符号"
+             email.split("@").last().isEmpty() || !email.split("@").last()
+                 .contains(".") -> true to "邮箱格式不正确"
+
+             else -> false to ""
+         }
+         _formState.value = _formState.value.copy(
+             emailError = result.first,
+             emailErrorMessage = result.second
+         )
+     }
+
+     // 校验手机号
+     private fun validatePhone() {
+         val phone = _formState.value.phone
+         val result = when {
+             phone.isEmpty() -> true to "电话号码不能为空"
+             phone.length != 11 -> true to "电话号码必须是11位数字"
+             !phone.all { it.isDigit() } -> true to "电话号码必须为纯数字"
+             else -> false to ""
+         }
+         _formState.value = _formState.value.copy(
+             phoneError = result.first,
+             phoneErrorMessage = result.second
+         )
+     }
+
+
+
+     // 注册逻辑
+     fun register() {
+         validatePasswords()
+         validateEmail()
+         validatePhone()
+         val state = _formState.value
+         val hasError = state.passwordError || state.emailError || state.phoneError
+         _formState.value = state.copy(formError = hasError) //如果有错误则设置formError为true
+         if (!hasError) {
+             viewModelScope.launch {
+                 // 只在注册时检查用户名是否存在
+                 try {
+                     val checkUserResponse =
+                         RetrofitClient.userService.searchUser(_formState.value.username)
+                     if (checkUserResponse.isSuccessful) {
+                         checkUserResponse.body()?.let {
+                             if (it.code == 1) {
+                                 _formState.value = _formState.value.copy(
+                                     usernameError = true,
+                                     usernameErrorMessage = "用户名已存在",
+                                     formError = true
+                                 )
+                                 return@launch //@launch是协程的作用域，表示在这个作用域内执行的代码
+                             } else if (it.code == 0) {
+                                 // 用户名不存在，可以继续注册
+                                 val addUserResponse = RetrofitClient.userService.addUser(
+                                     UserRequest.AddUserRequest(
+                                            username = state.username,
+                                            password = state.password,
+                                            email = state.email,
+                                            phone = state.phone
+                                     )
+                                 )
+                                 if (addUserResponse.isSuccessful) {
+                                     addUserResponse.body()?.let {
+                                         if (it.code == 1) {
+                                             // 注册成功，导航到登录页面
+                                             _navigateTo.emit(Routes.LOGIN)
+                                         } else {
+                                             _formState.value = _formState.value.copy(
+                                                 registerErrorMessage = it.error
+                                                     ?: "注册失败，请稍后再试", //如果error不为空则使用error，否则使用默认消息
+                                                 registerError = true,
+                                             )
+                                         }
+                                     }
+                                 } else {
+                                     _formState.value = _formState.value.copy(
+                                         registerErrorMessage = "网络请求失败，请稍后再试",
+                                         registerError = true,
+                                     )
+                                     return@launch
+                                 }
+                                 // 注册成功后清除错误状态并导航到登录页面
+                                 _formState.value = state.copy(formError = false)
+                                 _navigateTo.emit(Routes.LOGIN)
+                             }
+                         }
+                     }
+                 } catch (e: Exception) {
+                     _formState.value.copy(registerErrorMessage = "注册失败: ${e.message}",
+                         registerError = true,
+                         )
+                 }
+             }
+         }
+     }
+ }

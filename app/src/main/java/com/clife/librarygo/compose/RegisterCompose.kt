@@ -239,18 +239,31 @@ fun RegisterCompose(
                 Text(text = "注册", fontSize = 16.sp)
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "已有账号?前去登录",
-                color = Color(0xFF2575FC),
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .clickable {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                // 左侧如果有错误信息则显示
+                if (formState.registerError) {
+                    Text(
+                        text = formState.registerErrorMessage,
+                        color = Color.Red,
+                        fontSize = 14.sp
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f)) //空白符，保证登陆链接在右侧
+                // 在右侧添加返回登陆界面
+                Text(
+                    text = "已有账号? 立即登录",
+                    color = Color(0xFF2575FC),
+                    fontSize = 14.sp,
+                    modifier = Modifier.clickable {
                         navController.navigate(Routes.LOGIN) {
                             popUpTo(Routes.REGISTER) { inclusive = true }
                         }
-                    }
-            )
+                    }.align(Alignment.CenterVertically)
+                )
+            }
         }
     }
 }

@@ -25,4 +25,10 @@ interface UserService {
     suspend fun setNewPassword(
         @Body request: UserRequest.SetNewPasswordRequest
     ): Response<UserResponse.SetNewPasswordResponse>
+
+    //注册新用户
+    @POST("/user/addUser")
+    suspend fun addUser(
+        @Body request: UserRequest.AddUserRequest
+    ): Response<UserResponse.AddUserResponse>
 }

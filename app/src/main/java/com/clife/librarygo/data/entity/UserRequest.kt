@@ -8,4 +8,10 @@ sealed class UserRequest {
         val newPassword: String
     )
 
+    data class AddUserRequest(
+        val username: String,
+        val password: String,
+        val email: String,
+        val phone: String
+    )
 }

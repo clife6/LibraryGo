@@ -21,4 +21,11 @@ sealed class UserResponse {
         val message: String? = null,
         val error: String? = null,
     )
+
+    //注册新用户的响应
+    data class AddUserResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+    )
 }
