@@ -2,6 +2,7 @@ package com.clife.librarygo.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clife.librarygo.data.RetrofitClient
 import com.clife.librarygo.navigation.Routes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,17 +22,31 @@ class RetrievePasswordViewModel : ViewModel()   {
     fun verifyAccount(userEmail : String,userPhone : String) {
         viewModelScope.launch{
             _retrievePasswordError.value = null
-            val id = "12345" //getUserIdByEmailAndPhone(userEmail, userPhone)
             if(userEmail == "" || userPhone == "") {
                 _retrievePasswordError.value = "邮箱或手机号不能为空"
+                return@launch
             }
-            else if (id != null)//检查账号信息是否匹配
-            {
-                // 假设验证通过，导航到设置新密码界面
-                _navigateTo.emit(Routes.setNewPasswordWithId(id))
-            } else {
-                // 验证失败，设置错误信息
-                _retrievePasswordError.value = "账号信息不匹配，请检查"
+            try {
+                val id = RetrofitClient.userService.checkUserEmailAndPhone(userEmail, userPhone)
+                if(id.isSuccessful){
+                    id.body()?.let {
+                        if (it.code == 1) {
+                            _navigateTo.emit(Routes.setNewPasswordWithId(it.id.toString()))
+                        }else if (it.code == 0) {
+                            // 账户不存在，设置错误信息
+                            _retrievePasswordError.value = "未查询到账户，请检查邮箱或手机号是否正确"
+                        } else if (it.code == -1) {
+                            // 其他错误，设置错误信息
+                            _retrievePasswordError.value = "账户查询失败"
+                        }
+                    }
+                } else {
+                    // 请求失败，设置错误信息
+                    _retrievePasswordError.value = "网络请求失败，请稍后再试"
+                }
+            }catch (e: Exception) {
+                _retrievePasswordError.value = (_retrievePasswordError.value ?: "") + "错误信息: ${e.message}"
+                return@launch
             }
         }
     }
