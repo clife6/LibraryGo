@@ -27,6 +27,10 @@ class SetNewPasswordViewModel : ViewModel() {
                 _setNewPasswordError.value = "密码不能为空"
                 return@launch
             }
+            if(newPassword != confirmPassword) {
+                _setNewPasswordError.value = "两次输入的密码不一致"
+                return@launch
+            }
             try {
                 val response = RetrofitClient.userService.setNewPassword(SetNewPasswordRequest(id, newPassword))
                 if (response.isSuccessful){
