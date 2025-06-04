@@ -1,7 +1,5 @@
 package com.clife.librarygo.ui.screen.home
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Home
@@ -18,7 +16,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -47,18 +44,10 @@ fun HomeCompose(
                 ),
                 title = {
                     when (selectedTabIndex) {
-                        0 -> {
-                            Text("首页", style = MaterialTheme.typography.titleMedium)
-                        }
-                        1 -> {
-                            Text("图书发现", style = MaterialTheme.typography.titleMedium)
-                        }
-                        2 -> {
-                            Text("我的书架", style = MaterialTheme.typography.titleMedium)
-                        }
-                        3 -> {
-                            Text("个人中心", style = MaterialTheme.typography.titleMedium)
-                        }
+                        0 -> HomeTabHeader(id)
+                        1 -> DiscoverTabHeader(id)
+                        2 -> BookshelfTabHeader(id)
+                        3 -> ProfileTabHeader(id)
                     }
                 },
             )
@@ -79,51 +68,13 @@ fun HomeCompose(
     ) { contentPadding ->
         // 根据选中的标签显示不同的内容
         when (selectedTabIndex) {
-            0 -> HomeTabContent(contentPadding)
-            1 -> DiscoverTabContent(contentPadding)
-            2 -> BookshelfTabContent(contentPadding)
-            3 -> ProfileTabContent(contentPadding)
+            0 -> HomeTabContent(contentPadding,id)
+            1 -> DiscoverTabContent(contentPadding,id)
+            2 -> BookshelfTabContent(contentPadding,id)
+            3 -> ProfileTabContent(contentPadding,id)
         }
     }
 }
-
-
-@Composable
-fun HomeTabContent(paddingValues: PaddingValues) {
-    Text(
-        text = "首页内容",
-        modifier = Modifier.padding(paddingValues),
-        style = MaterialTheme.typography.bodyLarge
-    )
-}
-
-@Composable
-fun DiscoverTabContent(paddingValues: PaddingValues) {
-    Text(
-        text = "发现页内容",
-        modifier = Modifier.padding(paddingValues),
-        style = MaterialTheme.typography.bodyLarge
-    )
-}
-
-@Composable
-fun BookshelfTabContent(paddingValues: PaddingValues) {
-    Text(
-        text = "我的书架内容",
-        modifier = Modifier.padding(paddingValues),
-        style = MaterialTheme.typography.bodyLarge
-    )
-}
-
-@Composable
-fun ProfileTabContent(paddingValues: PaddingValues) {
-    Text(
-        text = "个人中心内容",
-        modifier = Modifier.padding(paddingValues),
-        style = MaterialTheme.typography.bodyLarge
-    )
-}
-
 
 @Preview(
     showBackground = true,
@@ -132,6 +83,6 @@ fun ProfileTabContent(paddingValues: PaddingValues) {
 @Composable
 fun PreviewHomeCompose() {
     LibraryGoTheme {
-        HomeCompose(navController = rememberNavController(),"1")
+        HomeCompose(navController = rememberNavController(), "1")
     }
 }
