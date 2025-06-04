@@ -36,4 +36,12 @@ sealed class UserResponse {
         val error: String? = null,
         val id: Long? = null,
     )
+
+    //用户登录的响应
+    data class LoginUserResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+        val id: Long? = null,
+    )
 }

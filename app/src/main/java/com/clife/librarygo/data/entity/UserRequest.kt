@@ -19,4 +19,9 @@ sealed class UserRequest {
         val adminName: String,
         val password: String
     )
+
+    data class LoginUserRequest(
+        val username: String,
+        val password: String
+    )
 }

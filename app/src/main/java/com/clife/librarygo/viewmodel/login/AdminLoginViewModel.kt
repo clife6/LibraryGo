@@ -22,7 +22,6 @@ class AdminLoginViewModel : ViewModel()  {
 
     // 模拟的登录逻辑
     fun login(adminName: String, password: String) {
-        println("登录")
         viewModelScope.launch {
             // 清除之前的错误信息
             _loginError.value = null

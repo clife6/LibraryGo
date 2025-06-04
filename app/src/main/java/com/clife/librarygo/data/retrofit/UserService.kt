@@ -37,4 +37,10 @@ interface UserService {
     suspend fun loginAdmin(
         @Body request: UserRequest.LoginAdminRequest
     ): Response<UserResponse.LoginAdminResponse>
+
+    //用户登录
+    @POST("/user/loginUser")
+    suspend fun loginUser(
+        @Body request: UserRequest.LoginUserRequest
+    ): Response<UserResponse.LoginUserResponse>
 }
