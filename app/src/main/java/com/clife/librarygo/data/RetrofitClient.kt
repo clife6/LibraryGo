@@ -16,8 +16,9 @@ object RetrofitClient {
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
             .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY // 打印完整日志(调试用)
+                level = HttpLoggingInterceptor.Level.BASIC
             })
             .build()
     }
