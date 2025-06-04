@@ -17,6 +17,10 @@ class RegisterViewModel : ViewModel() {
      private val _navigateTo = MutableSharedFlow<String>()
      val navigateTo = _navigateTo.asSharedFlow()
 
+    //按钮加载状态
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
      // 表单状态
      data class RegisterFormState(
          val username: String = "",
@@ -190,6 +194,7 @@ class RegisterViewModel : ViewModel() {
                      registerErrorMessage = "网络请求失败，请稍后再试",
                      registerError = true,
                  )
+                 _isLoading.value = false
                  return@launch
              }
              // 注册成功后清除错误状态
@@ -219,6 +224,8 @@ class RegisterViewModel : ViewModel() {
          val hasError = state.passwordError || state.emailError || state.phoneError
          _formState.value = state.copy(formError = hasError) //如果有错误则设置formError为true
          viewModelScope.launch {
+             // 注册按钮点击时的加载状态
+             _isLoading.value = true
              // 只在注册时检查用户名是否存在
              try {
                  val checkUserResponse =
@@ -232,9 +239,11 @@ class RegisterViewModel : ViewModel() {
                      }
                  }
              } catch (e: Exception) {
-                 _formState.value.copy(registerErrorMessage = "注册失败: ${e.message}",
+                 _formState.value.copy(registerErrorMessage = "错误信息: ${e.message}",
                      registerError = true,
                      )
+             }finally {
+                 _isLoading.value = false // 无论成功与否，注册完成后都将加载状态设置为false
              }
          }
      }

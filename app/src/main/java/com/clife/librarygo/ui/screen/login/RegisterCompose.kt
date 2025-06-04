@@ -38,6 +38,9 @@ fun RegisterCompose(
 ) {
     val formState by viewModel.formState.collectAsState()
 
+    // 监听按钮加载状态
+    val isLoading by viewModel.isLoading.collectAsState()
+
     // 监听导航事件
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collectLatest { route ->
@@ -227,6 +230,7 @@ fun RegisterCompose(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = { viewModel.register() },
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),

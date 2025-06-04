@@ -61,6 +61,9 @@ fun LoginCompose(
 ) {
     var passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
 
+    // 登录按钮状态
+    val isLoading by viewModel.isLoading.collectAsState()
+
     val formState by viewModel.formState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -164,6 +167,7 @@ fun LoginCompose(
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { viewModel.login() },
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),

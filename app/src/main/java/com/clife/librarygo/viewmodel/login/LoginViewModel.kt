@@ -17,6 +17,9 @@ class LoginViewModel() : ViewModel(){
     private val _navigateTo = MutableSharedFlow<String>()
     val navigateTo = _navigateTo.asSharedFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     // 表单状态
     data class LoginFormState(
         val username: String = "",
@@ -49,6 +52,7 @@ class LoginViewModel() : ViewModel(){
     //登录
     fun login(): Boolean {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val response = RetrofitClient.userService.loginUser(
                     UserRequest.LoginUserRequest(_formState.value.username, _formState.value.password))
@@ -72,8 +76,10 @@ class LoginViewModel() : ViewModel(){
                 // 处理网络错误或其他异常
                 _formState.value = _formState.value.copy(
                     loginError = true,
-                    loginErrorMessage = "网络错误，请稍后再试"
+                    loginErrorMessage = "错误信息: ${e.message}"
                 )
+            } finally {
+                _isLoading.value = false
             }
         }
         return _formState.value.loginError // 返回登录是否成功
