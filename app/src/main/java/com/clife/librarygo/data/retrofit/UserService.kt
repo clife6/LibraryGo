@@ -1,6 +1,6 @@
 package com.clife.librarygo.data.retrofit
 
-import com.clife.librarygo.data.entity.UserRequest
+import com.clife.librarygo.data.request.UserRequest
 import com.clife.librarygo.data.response.UserResponse
 import retrofit2.Response
 import retrofit2.http.Body

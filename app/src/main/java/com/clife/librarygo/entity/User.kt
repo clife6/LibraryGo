@@ -1,4 +1,4 @@
-package com.clife.librarygo.data.entity
+package com.clife.librarygo.entity
 
 data class User(
     val id: Long,

@@ -1,4 +1,4 @@
-package com.clife.librarygo.data.entity
+package com.clife.librarygo.data.request
 
 
 sealed class UserRequest {
