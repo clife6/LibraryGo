@@ -11,7 +11,9 @@ import retrofit2.http.Query
 interface UserService {
     //查询用户名是否已存在
     @GET("/user/searchUser")
-    suspend fun searchUser(@Query("username") username: String): Response<UserResponse.SearchUserResponse>
+    suspend fun searchUser(
+        @Query("username") username: String
+    ): Response<UserResponse.SearchUserResponse>
 
     //查询用户名的邮箱与手机号是否一致如果一致需要返回该账号的id
     @GET("/user/checkUserEmailAndPhone")

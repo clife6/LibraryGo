@@ -20,13 +20,11 @@ class RetrievePasswordViewModel : ViewModel() {
     fun verifyAccount(username: String, userEmail: String, userPhone: String) {
         viewModelScope.launch {
             _retrievePasswordError.value = null
-
             // 输入验证
             if (username.isBlank() || userEmail.isBlank() || userPhone.isBlank()) {
                 _retrievePasswordError.value = "账户名称、邮箱或手机号不能为空"
                 return@launch
             }
-
             try {
                 // 1. 检查用户是否存在
                 val searchUserResponse = RetrofitClient.userService.searchUser(username)
@@ -34,7 +32,6 @@ class RetrievePasswordViewModel : ViewModel() {
                     _retrievePasswordError.value = "网络请求失败，请稍后再试"
                     return@launch
                 }
-
                 when (searchUserResponse.body()?.code) {
                     1 -> {
                         // 用户存在，验证邮箱和手机号
@@ -44,12 +41,10 @@ class RetrievePasswordViewModel : ViewModel() {
                                 userEmail,
                                 userPhone
                             )
-
                             if (!checkResponse.isSuccessful || checkResponse.body() == null) {
                                 _retrievePasswordError.value = "网络请求失败，请稍后再试"
                                 return@launch
                             }
-
                             when (checkResponse.body()?.code) {
                                 1 -> {
                                     // 验证成功，导航到设置新密码
