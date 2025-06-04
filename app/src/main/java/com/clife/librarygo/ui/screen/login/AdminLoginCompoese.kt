@@ -60,7 +60,7 @@ fun AdminLoginCompose(
     val adminName = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
-
+    val isLoading by viewModel.isLoading.collectAsState()
     val loginError by viewModel.loginError.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -166,6 +166,7 @@ fun AdminLoginCompose(
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { viewModel.login(adminName.value, password.value) },
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),

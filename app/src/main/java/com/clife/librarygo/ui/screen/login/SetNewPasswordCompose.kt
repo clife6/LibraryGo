@@ -59,17 +59,16 @@ fun SetNewPasswordCompose(
 ){
     val newPassword = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
-
     // 可见性控制
     val passwordVisible = remember { mutableStateOf(false) }
     val confirmPasswordVisible = remember { mutableStateOf(false) }
-
+    val isLoading by viewModel.isLoading.collectAsState()
     val setNewPasswordError by viewModel.setNewPasswordError.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collectLatest { route ->
             navController.navigate(route) {
-                popUpTo(Routes.SET_NEW_PASSWORD) { inclusive = true }
+                popUpTo(Routes.setNewPasswordWithId(id)) { inclusive = true }
                 launchSingleTop = true
             }
         }
@@ -181,6 +180,7 @@ fun SetNewPasswordCompose(
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { viewModel.setNewPassword(id,newPassword.value,confirmPassword.value) },
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),

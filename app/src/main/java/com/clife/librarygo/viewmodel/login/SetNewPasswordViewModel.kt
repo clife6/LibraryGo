@@ -19,41 +19,41 @@ class SetNewPasswordViewModel : ViewModel() {
     private val _setNewPasswordError = MutableStateFlow<String?>(null)
     val setNewPasswordError = _setNewPasswordError.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     fun setNewPassword(id: String, newPassword: String, confirmPassword: String) {
         viewModelScope.launch{
+            _isLoading.value = true
             _setNewPasswordError.value = null
             // 简单的密码匹配检查
             if(newPassword == "" || confirmPassword == "") {
                 _setNewPasswordError.value = "密码不能为空"
+                _isLoading.value = false
                 return@launch
             }
             if(newPassword != confirmPassword) {
                 _setNewPasswordError.value = "两次输入的密码不一致"
+                _isLoading.value = false
                 return@launch
             }
             try {
                 val response = RetrofitClient.userService.setNewPassword(UserRequest.SetNewPasswordRequest(id, newPassword))
-                if (response.isSuccessful){
-                    response.body()?.let {
-                        if (it.code == 1) {
-                            // 假设设置新密码成功，导航到登录界面
-                            _navigateTo.emit(Routes.LOGIN)
-                        } else if (it.code == 0) {
-                            // 设置新密码失败，设置错误信息
-                            _setNewPasswordError.value = "账户不存在，设置新密码失败"
-                        }else if (it.code == -1) {
-                            // 其他错误，设置错误信息
-                            _setNewPasswordError.value = "设置新密码失败"
-                        }
-                    }
-                } else {
-                    // 请求失败，设置错误信息
+                if (!response.isSuccessful || response.body() == null) {
                     _setNewPasswordError.value = "网络请求失败，请稍后再试"
+                    _isLoading.value = false
+                    return@launch
+                }
+                when (response.body()?.code) {
+                    1 -> _navigateTo.emit(Routes.LOGIN)
+                    0 -> _setNewPasswordError.value = "账户不存在或已被删除"
+                    else -> _setNewPasswordError.value = "修改密码失败"
                 }
             }catch (e: Exception) {
                 // 捕获异常并设置错误信息
-                _setNewPasswordError.value = (_setNewPasswordError.value ?: "") + "错误信息: ${e.message}"
-                return@launch
+                _setNewPasswordError.value = "错误信息: ${e.message}"
+            }finally {
+                _isLoading.value = false
             }
         }
     }

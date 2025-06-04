@@ -58,7 +58,7 @@ fun RetrievePasswordCompose(
     val username = remember { mutableStateOf("") }
     val userEmail = remember { mutableStateOf("") }
     val userPhone = remember { mutableStateOf("") }
-
+    val isLoading by viewModel.isLoading.collectAsState()
     val retrievePasswordError by viewModel.retrievePasswordError.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -179,6 +179,7 @@ fun RetrievePasswordCompose(
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { viewModel.verifyAccount(username.value,userEmail.value,userPhone.value) },
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),

@@ -20,38 +20,36 @@ class AdminLoginViewModel : ViewModel()  {
     private val _loginError = MutableStateFlow<String?>(null)
     val loginError = _loginError.asStateFlow()
 
-    // 模拟的登录逻辑
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     fun login(adminName: String, password: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             // 清除之前的错误信息
             _loginError.value = null
             if (adminName == "" || password == "") {
                 _loginError.value = "管理员账号或密码不能为空"
+                _isLoading.value = false
                 return@launch
             }
             try {
                 val response = RetrofitClient.userService.loginAdmin(UserRequest.LoginAdminRequest(adminName, password))
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        if (it.code == 1) {
-                            // 登录成功，导航到管理员界面
-                            _navigateTo.emit(Routes.homeWithId(it.id.toString()))
-                        } else if (it.code == 0) {
-                            // 登录失败，设置错误信息
-                            _loginError.value = "管理员账号或密码错误"
-                        } else if (it.code == -1) {
-                            // 其他错误，设置错误信息
-                            _loginError.value = "登录失败，请稍后再试"
-                        }
-                    }
-                } else {
-                    // 请求失败，设置错误信息
+                if (!response.isSuccessful || response.body() == null) {
                     _loginError.value = "网络请求失败，请稍后再试"
+                    _isLoading.value = false
+                    return@launch
+                }
+                when (response.body()?.code) {
+                    1 -> _navigateTo.emit(Routes.homeWithId(response.body()?.id.toString()))
+                    0 -> _loginError.value = "管理员账号或密码错误"
+                    else -> _loginError.value = "登录失败，请稍后再试"
                 }
             } catch (e: Exception) {
                 // 捕获异常并设置错误信息
-                _loginError.value = (_loginError.value ?: "") + "错误信息: ${e.message}"
-                return@launch
+                _loginError.value = "错误信息: ${e.message}"
+            }finally {
+                _isLoading.value = false
             }
         }
     }
