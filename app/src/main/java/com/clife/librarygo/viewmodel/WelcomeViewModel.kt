@@ -1,4 +1,4 @@
-package com.clife.librarygo
+package com.clife.librarygo.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

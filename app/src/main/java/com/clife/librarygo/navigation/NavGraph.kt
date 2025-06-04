@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.clife.librarygo.ui.screen.login.AdminLoginCompose
 import com.clife.librarygo.ui.screen.login.LoginCompose
-import com.clife.librarygo.WelcomeCompose
+import com.clife.librarygo.ui.screen.WelcomeCompose
 import com.clife.librarygo.ui.screen.home.HomeCompose
 import com.clife.librarygo.ui.screen.login.RegisterCompose
 import com.clife.librarygo.ui.screen.login.RetrievePasswordCompose
