@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -54,6 +55,7 @@ fun RetrievePasswordCompose(
     navController: NavController,
     viewModel: RetrievePasswordViewModel = viewModel()
 ) {
+    val username = remember { mutableStateOf("") }
     val userEmail = remember { mutableStateOf("") }
     val userPhone = remember { mutableStateOf("") }
 
@@ -99,6 +101,28 @@ fun RetrievePasswordCompose(
                 color = Color(0xFF2575FC)
             )
             Spacer(modifier = Modifier.height(32.dp))
+            OutlinedTextField(
+                value = username.value,
+                onValueChange = { newValue ->
+                    username.value = newValue
+                    if (retrievePasswordError != null) viewModel.clearRetrievePasswordError()
+                },
+                label = { Text("请输入账户名称") },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true,
+                leadingIcon = {
+                    Icon(Icons.Filled.Person, contentDescription = "username Icon")
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color(0xFF2575FC),
+                    unfocusedIndicatorColor = Color.LightGray,
+                    focusedLabelColor = Color(0xFF2575FC),
+                    cursorColor = Color(0xFF2575FC)
+                ),
+                isError = retrievePasswordError != null
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = userEmail.value,
                 onValueChange = { newValue ->
@@ -154,7 +178,7 @@ fun RetrievePasswordCompose(
             }
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { viewModel.verifyAccount(userEmail.value,userPhone.value) },
+                onClick = { viewModel.verifyAccount(username.value,userEmail.value,userPhone.value) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),

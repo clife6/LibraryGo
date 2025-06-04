@@ -51,6 +51,7 @@ class AdminLoginViewModel : ViewModel()  {
             } catch (e: Exception) {
                 // 捕获异常并设置错误信息
                 _loginError.value = (_loginError.value ?: "") + "错误信息: ${e.message}"
+                return@launch
             }
         }
     }

@@ -19,23 +19,47 @@ class RetrievePasswordViewModel : ViewModel()   {
     private val _retrievePasswordError = MutableStateFlow<String?>(null)
     val retrievePasswordError = _retrievePasswordError.asStateFlow()
 
-    fun verifyAccount(userEmail : String,userPhone : String) {
+    fun verifyAccount(username : String,userEmail : String,userPhone : String) {
         viewModelScope.launch{
             _retrievePasswordError.value = null
-            if(userEmail == "" || userPhone == "") {
-                _retrievePasswordError.value = "邮箱或手机号不能为空"
+            if(username == "" || userEmail == "" || userPhone == "") {
+                _retrievePasswordError.value = "账户名称、邮箱或手机号不能为空"
                 return@launch
             }
             try {
-                val response = RetrofitClient.userService.checkUserEmailAndPhone(userEmail, userPhone)
-                if(response.isSuccessful){
-                    response.body()?.let {
-                        if (it.code == 1) {
-                            _navigateTo.emit(Routes.setNewPasswordWithId(it.id.toString()))
-                        }else if (it.code == 0) {
-                            // 账户不存在，设置错误信息
-                            _retrievePasswordError.value = "未查询到邮箱和手机号绑定一致的账户，请检查邮箱或手机号是否正确"
-                        } else if (it.code == -1) {
+                val searchUserResponse = RetrofitClient.userService.searchUser(username)
+                if (searchUserResponse.isSuccessful) {
+                    searchUserResponse.body()?.let { response ->
+                        if (response.code == 1) {
+                            // 用户名存在，继续验证邮箱和手机号
+                            try {
+                                val checkUserEmailAndPhoneResponse = RetrofitClient.userService.checkUserEmailAndPhone(username, userEmail, userPhone)
+                                if (checkUserEmailAndPhoneResponse.isSuccessful) {
+                                    checkUserEmailAndPhoneResponse.body()?.let { checkResponse ->
+                                        if (checkResponse.code == 1) {
+                                            // 邮箱和手机号匹配，导航到设置新密码界面
+                                            _navigateTo.emit(Routes.setNewPasswordWithId(checkResponse.id.toString()))
+                                        } else if (checkResponse.code == 0) {
+                                            // 邮箱或手机号不匹配，设置错误信息
+                                            _retrievePasswordError.value = "邮箱或手机号与账户名称不匹配，请检查输入"
+                                        } else if (checkResponse.code == -1) {
+                                            // 其他错误，设置错误信息
+                                            _retrievePasswordError.value = "账户查询失败"
+                                        }
+                                    }
+                                } else {
+                                    // 请求失败，设置错误信息
+                                    _retrievePasswordError.value = "网络请求失败，请稍后再试"
+                                }
+                            }catch (e: Exception) {
+                                // 捕获异常并设置错误信息
+                                _retrievePasswordError.value = (_retrievePasswordError.value ?: "") + "错误信息: ${e.message}"
+                                return@launch
+                            }
+                        } else if (response.code == 0) {
+                            // 用户名不存在，设置错误信息
+                            _retrievePasswordError.value = "未查询到该账户，请检查账户名称是否正确"
+                        } else if (response.code == -1) {
                             // 其他错误，设置错误信息
                             _retrievePasswordError.value = "账户查询失败"
                         }

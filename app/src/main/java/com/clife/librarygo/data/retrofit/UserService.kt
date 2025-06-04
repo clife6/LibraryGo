@@ -16,6 +16,7 @@ interface UserService {
     //查询用户名的邮箱与手机号是否一致如果一致需要返回该账号的id
     @GET("/user/checkUserEmailAndPhone")
     suspend fun checkUserEmailAndPhone(
+        @Query("username") username: String,
         @Query("email") email: String,
         @Query("phone") phone: String
     ): Response<UserResponse.CheckUserEmailAndPhoneResponse>

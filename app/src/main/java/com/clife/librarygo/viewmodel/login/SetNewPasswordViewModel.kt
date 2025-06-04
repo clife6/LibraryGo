@@ -53,6 +53,7 @@ class SetNewPasswordViewModel : ViewModel() {
             }catch (e: Exception) {
                 // 捕获异常并设置错误信息
                 _setNewPasswordError.value = (_setNewPasswordError.value ?: "") + "错误信息: ${e.message}"
+                return@launch
             }
         }
     }
