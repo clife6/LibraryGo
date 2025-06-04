@@ -159,7 +159,54 @@ import kotlinx.coroutines.launch
          )
      }
 
+     // 用户名不存在时的注册函数
+     fun registerWithNoUsername(state: RegisterFormState) = viewModelScope.launch {
+         try {
+             val addUserResponse = RetrofitClient.userService.addUser(
+                 UserRequest.AddUserRequest(
+                     username = state.username,
+                     password = state.password,
+                     email = state.email,
+                     phone = state.phone
+                 )
+             )
+             if (addUserResponse.isSuccessful) {
+                 addUserResponse.body()?.let {
+                     if (it.code == 1) {
+                         // 注册成功，导航到登录页面
+                         _navigateTo.emit(Routes.LOGIN)
+                     } else {
+                         _formState.value = _formState.value.copy(
+                             registerErrorMessage = it.error
+                                 ?: "注册失败，请稍后再试", //如果error不为空则使用error，否则使用默认消息
+                             registerError = true,
+                         )
+                     }
+                 }
+             } else {
+                 _formState.value = _formState.value.copy(
+                     registerErrorMessage = "网络请求失败，请稍后再试",
+                     registerError = true,
+                 )
+                 return@launch
+             }
+             // 注册成功后清除错误状态
+             _formState.value = state.copy(formError = false)
+         } catch (e: Exception) {
+             _formState.value.copy(registerErrorMessage = "注册失败: ${e.message}",
+                 registerError = true,
+             )
+         }
+     }
 
+     //用户名存在时的注册函数
+     fun registerWithUsername(){
+         _formState.value = _formState.value.copy(
+             usernameError = true,
+             usernameErrorMessage = "用户名已存在",
+             formError = true
+         )
+     }
 
      // 注册逻辑
      fun register() {
@@ -169,62 +216,26 @@ import kotlinx.coroutines.launch
          val state = _formState.value
          val hasError = state.passwordError || state.emailError || state.phoneError
          _formState.value = state.copy(formError = hasError) //如果有错误则设置formError为true
-         if (!hasError) {
-             viewModelScope.launch {
-                 // 只在注册时检查用户名是否存在
-                 try {
-                     val checkUserResponse =
-                         RetrofitClient.userService.searchUser(_formState.value.username)
-                     if (checkUserResponse.isSuccessful) {
-                         checkUserResponse.body()?.let {
-                             if (it.code == 1) {
-                                 _formState.value = _formState.value.copy(
-                                     usernameError = true,
-                                     usernameErrorMessage = "用户名已存在",
-                                     formError = true
-                                 )
-                                 return@launch //@launch是协程的作用域，表示在这个作用域内执行的代码
-                             } else if (it.code == 0) {
-                                 // 用户名不存在，可以继续注册
-                                 val addUserResponse = RetrofitClient.userService.addUser(
-                                     UserRequest.AddUserRequest(
-                                            username = state.username,
-                                            password = state.password,
-                                            email = state.email,
-                                            phone = state.phone
-                                     )
-                                 )
-                                 if (addUserResponse.isSuccessful) {
-                                     addUserResponse.body()?.let {
-                                         if (it.code == 1) {
-                                             // 注册成功，导航到登录页面
-                                             _navigateTo.emit(Routes.LOGIN)
-                                         } else {
-                                             _formState.value = _formState.value.copy(
-                                                 registerErrorMessage = it.error
-                                                     ?: "注册失败，请稍后再试", //如果error不为空则使用error，否则使用默认消息
-                                                 registerError = true,
-                                             )
-                                         }
-                                     }
-                                 } else {
-                                     _formState.value = _formState.value.copy(
-                                         registerErrorMessage = "网络请求失败，请稍后再试",
-                                         registerError = true,
-                                     )
-                                     return@launch
-                                 }
-                                 // 注册成功后清除错误状态并导航到登录页面
-                                 _formState.value = state.copy(formError = false)
-                                 _navigateTo.emit(Routes.LOGIN)
-                             }
+         viewModelScope.launch {
+             // 只在注册时检查用户名是否存在
+             try {
+                 val checkUserResponse =
+                     RetrofitClient.userService.searchUser(_formState.value.username)
+                 if (checkUserResponse.isSuccessful) {
+                     checkUserResponse.body()?.let {
+                         if (it.code == 1) {
+                             // 用户名已存在，使用该函数修改错误信息
+                             registerWithUsername()
+                         } else if (it.code == 0) {
+                             // 用户名不存在，可以继续注册
+                             registerWithNoUsername(state)
                          }
                      }
-                 } catch (e: Exception) {
-                     _formState.value.copy(registerErrorMessage = "注册失败: ${e.message}",
-                         registerError = true,
-                         )
                  }
+             } catch (e: Exception) {
+                 _formState.value.copy(registerErrorMessage = "注册失败: ${e.message}",
+                     registerError = true,
+                     )
              }
          }
      }
