@@ -3,6 +3,7 @@ package com.clife.librarygo.viewmodel.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clife.librarygo.data.RetrofitClient
+import com.clife.librarygo.data.request.UserRequest
 import com.clife.librarygo.navigation.Routes
 
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,35 +16,66 @@ class LoginViewModel() : ViewModel(){
     // 用于触发导航事件
     private val _navigateTo = MutableSharedFlow<String>()
     val navigateTo = _navigateTo.asSharedFlow()
-    // 用于显示登录错误信息
-    private val _loginError = MutableStateFlow<String?>(null)
-    val loginError = _loginError.asStateFlow()
 
-    fun login(username: String, password: String): Boolean {
+    // 表单状态
+    data class LoginFormState(
+        val username: String = "",
+        val usernameError : Boolean = false,
+        val usernameErrorMessage: String = "",
+        val password: String = "",
+        val passwordError: Boolean = false,
+        val passwordErrorMessage: String = "",
+        val loginError: Boolean = false,
+        val loginErrorMessage: String = ""
+    )
+    private val _formState = MutableStateFlow(LoginFormState())
+    val formState = _formState.asStateFlow()
+
+    // 更新表单
+    // 更新用户名
+    fun updateUsername(username: String) {
+        _formState.value = _formState.value.copy(username = username)
+    }
+
+    // 更新密码
+    fun updatePassword(password: String) {
+        _formState.value = _formState.value.copy(
+            password = password,
+            loginError = false,
+            loginErrorMessage = ""
+        )
+    }
+
+    //登录
+    fun login(): Boolean {
         viewModelScope.launch {
-            _loginError.value = null
             try {
-                val response = RetrofitClient.userService.searchUser(username)
+                val response = RetrofitClient.userService.loginUser(
+                    UserRequest.LoginUserRequest(_formState.value.username, _formState.value.password))
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        if(it.code == 1){
-                            _navigateTo.emit(Routes.homeWithId("1")) // 登录成功，导航到主页
+                        when (it.code) {
+                            1 -> _navigateTo.emit(Routes.homeWithId("1")) // 登录成功，导航到主页
+                            0 -> _formState.value = _formState.value.copy(
+                                loginError = true,
+                                loginErrorMessage = "账号或密码错误"
+                            )
+                            else -> _formState.value = _formState.value.copy(
+                                loginError = true,
+                                loginErrorMessage = "账号密码不能为空"
+                            )
                         }
                     }
-                } else {
-                    // 登录失败，设置错误信息
-                    _loginError.value = "用户名或密码错误"
                 }
             } catch (e: Exception) {
-                _loginError.value = "登录失败: ${e.message}"
+                e.printStackTrace()
+                // 处理网络错误或其他异常
+                _formState.value = _formState.value.copy(
+                    loginError = true,
+                    loginErrorMessage = "网络错误，请稍后再试"
+                )
             }
         }
-        return _loginError.value == null // 返回登录是否成功
+        return _formState.value.loginError // 返回登录是否成功
     }
-
-    // 用于清除错误信息，例如当用户开始重新输入时
-    fun clearLoginError() {
-        _loginError.value = null
-    }
-
 }

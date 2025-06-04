@@ -59,11 +59,9 @@ fun LoginCompose(
     navController: NavController,
     viewModel: LoginViewModel = viewModel(),
 ) {
-    var username = remember { mutableStateOf("") }
-    var password = remember { mutableStateOf("") }
     var passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
 
-    val loginError by viewModel.loginError.collectAsState()
+    val formState by viewModel.formState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collectLatest { route ->
@@ -105,12 +103,10 @@ fun LoginCompose(
                 color = Color(0xFF2575FC)
             )
             Spacer(modifier = Modifier.height(32.dp))
+            //用户名输入框
             OutlinedTextField(
-                value = username.value,
-                onValueChange = { newValue ->
-                    username.value = newValue
-                    if (loginError != null) viewModel.clearLoginError()
-                },
+                value = formState.username,
+                onValueChange = viewModel::updateUsername,
                 label = { Text("用户名") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -118,20 +114,18 @@ fun LoginCompose(
                     Icon(Icons.Filled.Person, contentDescription = "Username Icon")
                 },
                 colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color(0xFF2575FC),
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedLabelColor = Color(0xFF2575FC),
-                    cursorColor = Color(0xFF2575FC)
+                    focusedIndicatorColor = if (formState.loginError) Color.Red else Color(0xFF2575FC),
+                    unfocusedIndicatorColor = if (formState.loginError) Color.Red else Color.LightGray,
+                    focusedLabelColor = if (formState.loginError) Color.Red else Color(0xFF2575FC),
+                    cursorColor = if (formState.loginError) Color.Red else Color(0xFF2575FC)
                 ),
-                isError = loginError != null
+                isError = formState.usernameError
             )
             Spacer(modifier = Modifier.height(16.dp))
+            //密码输入框
             OutlinedTextField(
-                value = password.value,//文本字段的当前值
-                onValueChange = { newValue ->
-                    password.value = newValue
-                    if (loginError != null) viewModel.clearLoginError()
-                },//当值改变时的回调
+                value = formState.password,
+                onValueChange = viewModel::updatePassword,
                 label = { Text("密码") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,//是否单行文本
@@ -150,24 +144,26 @@ fun LoginCompose(
                     )
                 },
                 colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color(0xFF2575FC),
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedLabelColor = Color(0xFF2575FC),
-                    cursorColor = Color(0xFF2575FC)
+                    focusedIndicatorColor = if (formState.loginError) Color.Red else Color(0xFF2575FC),
+                    unfocusedIndicatorColor = if (formState.loginError) Color.Red else Color.LightGray,
+                    focusedLabelColor = if (formState.loginError) Color.Red else Color(0xFF2575FC),
+                    cursorColor = if (formState.loginError) Color.Red else Color(0xFF2575FC)
                 ),
-                isError = loginError != null
+                isError = formState.passwordError
             )
-            if (loginError != null) {
+            // 显示错误信息
+            if (formState.loginError) {
                 Text(
-                    text = loginError ?: "登录失败",
+                    text = formState.loginErrorMessage,
                     color = Color.Red,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { viewModel.login(username.value, password.value) },
+                onClick = { viewModel.login() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
- class RegisterViewModel : ViewModel() {
+class RegisterViewModel : ViewModel() {
 
      // 导航事件
      private val _navigateTo = MutableSharedFlow<String>()
@@ -134,7 +134,7 @@ import kotlinx.coroutines.launch
              email.isEmpty() -> true to "邮箱不能为空"
              !email.contains("@") -> true to "邮箱格式不正确，缺少@符号"
              email.split("@").last().isEmpty() || !email.split("@").last()
-                 .contains(".") -> true to "邮箱格式不正确"
+                 .contains(".com") -> true to "邮箱格式不正确"
 
              else -> false to ""
          }
@@ -172,15 +172,17 @@ import kotlinx.coroutines.launch
              )
              if (addUserResponse.isSuccessful) {
                  addUserResponse.body()?.let {
-                     if (it.code == 1) {
-                         // 注册成功，导航到登录页面
-                         _navigateTo.emit(Routes.LOGIN)
-                     } else {
-                         _formState.value = _formState.value.copy(
-                             registerErrorMessage = it.error
-                                 ?: "注册失败，请稍后再试", //如果error不为空则使用error，否则使用默认消息
-                             registerError = true,
-                         )
+                     when (it.code) {
+                         1 -> {
+                             // 注册成功，导航到登录页面
+                             _navigateTo.emit(Routes.LOGIN)
+                         }
+                         else -> {
+                             _formState.value = _formState.value.copy(
+                                 registerErrorMessage = it.error ?: "注册失败，请稍后再试",
+                                 registerError = true,
+                             )
+                         }
                      }
                  }
              } else {
@@ -223,12 +225,9 @@ import kotlinx.coroutines.launch
                      RetrofitClient.userService.searchUser(_formState.value.username)
                  if (checkUserResponse.isSuccessful) {
                      checkUserResponse.body()?.let {
-                         if (it.code == 1) {
-                             // 用户名已存在，使用该函数修改错误信息
-                             registerWithUsername()
-                         } else if (it.code == 0) {
-                             // 用户名不存在，可以继续注册
-                             registerWithNoUsername(state)
+                         when (it.code) {
+                             1 -> registerWithUsername() // 用户名已存在
+                             0 -> registerWithNoUsername(state) // 用户名不存在，进行注册
                          }
                      }
                  }
