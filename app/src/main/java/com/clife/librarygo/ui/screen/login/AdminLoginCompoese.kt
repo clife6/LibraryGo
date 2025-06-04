@@ -1,4 +1,4 @@
-package com.clife.librarygo.compose
+package com.clife.librarygo.ui.screen.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -48,28 +49,24 @@ import androidx.navigation.compose.rememberNavController
 import com.clife.librarygo.R
 import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
-import com.clife.librarygo.viewmodel.SetNewPasswordViewModel
+import com.clife.librarygo.viewmodel.login.AdminLoginViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun SetNewPasswordCompose(
+fun AdminLoginCompose(
     navController: NavController,
-    id: String,
-    viewModel: SetNewPasswordViewModel = viewModel(),
+    viewModel: AdminLoginViewModel = viewModel(),
 ){
-    val newPassword = remember { mutableStateOf("") }
-    val confirmPassword = remember { mutableStateOf("") }
+    val adminName = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
+    val passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
 
-    // 可见性控制
-    val passwordVisible = remember { mutableStateOf(false) }
-    val confirmPasswordVisible = remember { mutableStateOf(false) }
-
-    val setNewPasswordError by viewModel.setNewPasswordError.collectAsState()
+    val loginError by viewModel.loginError.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collectLatest { route ->
             navController.navigate(route) {
-                popUpTo(Routes.SET_NEW_PASSWORD) { inclusive = true }
+                popUpTo(Routes.LOGIN_ADMIN) { inclusive = true }
                 launchSingleTop = true
             }
         }
@@ -100,19 +97,39 @@ fun SetNewPasswordCompose(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "重新设置新的密码",
+                text = "管理员登录",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2575FC)
             )
             Spacer(modifier = Modifier.height(32.dp))
-            //密码输入框
             OutlinedTextField(
-                value = newPassword.value,
+                value = adminName.value,
                 onValueChange = { newValue ->
-                    newPassword.value = newValue
-                    if (setNewPasswordError != null) viewModel.clearSetNewPasswordError()
+                    adminName.value = newValue
+                    if (loginError != null) viewModel.clearLoginError()
                 },
+                label = { Text("管理员") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                leadingIcon = {
+                    Icon(Icons.Filled.AdminPanelSettings, contentDescription = "AdminName Icon")
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color(0xFF2575FC),
+                    unfocusedIndicatorColor = Color.LightGray,
+                    focusedLabelColor = Color(0xFF2575FC),
+                    cursorColor = Color(0xFF2575FC)
+                ),
+                isError = loginError != null
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = password.value,//文本字段的当前值
+                onValueChange = { newValue ->
+                    password.value = newValue
+                    if (loginError != null) viewModel.clearLoginError()
+                },//当值改变时的回调
                 label = { Text("密码") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,//是否单行文本
@@ -134,43 +151,11 @@ fun SetNewPasswordCompose(
                     focusedLabelColor = Color(0xFF2575FC),
                     cursorColor = Color(0xFF2575FC)
                 ),
-                isError = setNewPasswordError != null
+                isError = loginError != null
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            //确认密码输入框
-            OutlinedTextField(
-                value = confirmPassword.value,
-                onValueChange = { newValue ->
-                    confirmPassword.value = newValue
-                    if (setNewPasswordError != null) viewModel.clearSetNewPasswordError()
-                },
-                label = { Text("确认密码")},
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,//是否单行文本
-                visualTransformation = if (confirmPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-
-                leadingIcon = {
-                    Icon(Icons.Filled.Lock, contentDescription = "Password Icon")
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = if (confirmPasswordVisible.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                        contentDescription = "切换密码可见性",
-                        modifier = Modifier.clickable { confirmPasswordVisible.value = !confirmPasswordVisible.value }
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color(0xFF2575FC),
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedLabelColor = Color(0xFF2575FC),
-                    cursorColor = Color(0xFF2575FC)
-                ),
-                isError = setNewPasswordError != null
-            )
-            if (setNewPasswordError != null) {
+            if (loginError != null) {
                 Text(
-                    text = setNewPasswordError ?: "",
+                    text = loginError ?: "",
                     color = Color.Red,
                     fontSize = 14.sp,
                     modifier = Modifier
@@ -180,7 +165,7 @@ fun SetNewPasswordCompose(
             }
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { viewModel.setNewPassword(id,newPassword.value,confirmPassword.value) },
+                onClick = { viewModel.login(adminName.value, password.value) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -190,18 +175,17 @@ fun SetNewPasswordCompose(
                 ),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = "确认", fontSize = 16.sp)
+                Text(text = "登录", fontSize = 16.sp)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "返回上一步",
+                text = "用户登录",
                 color = Color(0xFF2575FC),
                 fontSize = 14.sp,
-                modifier = Modifier
-                    .align(Alignment.End)
+                modifier = Modifier.align(Alignment.End)
                     .clickable {
-                        // 跳转到用户验证邮箱与电话号码页面
-                        navController.navigate(Routes.RETRIEVE_PASSWORD)
+                        // 跳转到用户登录页面
+                        navController.navigate(Routes.LOGIN)
                     }
             )
         }
@@ -214,8 +198,8 @@ fun SetNewPasswordCompose(
 )
 
 @Composable
-fun PreviewSetNewPasswordCompose() {
+fun PreviewAdminLoginCompose() {
     LibraryGoTheme {
-        SetNewPasswordCompose(navController = rememberNavController(),"1234")
+        AdminLoginCompose(navController = rememberNavController())
     }
 }

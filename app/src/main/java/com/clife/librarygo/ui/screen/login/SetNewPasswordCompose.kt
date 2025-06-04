@@ -1,4 +1,4 @@
-package com.clife.librarygo.compose
+package com.clife.librarygo.ui.screen.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,8 +15,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -36,6 +37,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,24 +48,28 @@ import androidx.navigation.compose.rememberNavController
 import com.clife.librarygo.R
 import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
-import com.clife.librarygo.viewmodel.RetrievePasswordViewModel
+import com.clife.librarygo.viewmodel.login.SetNewPasswordViewModel
 import kotlinx.coroutines.flow.collectLatest
 
-
 @Composable
-fun RetrievePasswordCompose(
+fun SetNewPasswordCompose(
     navController: NavController,
-    viewModel: RetrievePasswordViewModel = viewModel()
-) {
-    val userEmail = remember { mutableStateOf("") }
-    val userPhone = remember { mutableStateOf("") }
+    id: String,
+    viewModel: SetNewPasswordViewModel = viewModel(),
+){
+    val newPassword = remember { mutableStateOf("") }
+    val confirmPassword = remember { mutableStateOf("") }
 
-    val retrievePasswordError by viewModel.retrievePasswordError.collectAsState()
+    // 可见性控制
+    val passwordVisible = remember { mutableStateOf(false) }
+    val confirmPasswordVisible = remember { mutableStateOf(false) }
+
+    val setNewPasswordError by viewModel.setNewPasswordError.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collectLatest { route ->
             navController.navigate(route) {
-                popUpTo(Routes.RETRIEVE_PASSWORD) { inclusive = true }
+                popUpTo(Routes.SET_NEW_PASSWORD) { inclusive = true }
                 launchSingleTop = true
             }
         }
@@ -93,24 +100,33 @@ fun RetrievePasswordCompose(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "忘记密码",
+                text = "重新设置新的密码",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2575FC)
             )
             Spacer(modifier = Modifier.height(32.dp))
+            //密码输入框
             OutlinedTextField(
-                value = userEmail.value,
+                value = newPassword.value,
                 onValueChange = { newValue ->
-                    userEmail.value = newValue
-                    if (retrievePasswordError != null) viewModel.clearRetrievePasswordError()
+                    newPassword.value = newValue
+                    if (setNewPasswordError != null) viewModel.clearSetNewPasswordError()
                 },
-                label = { Text("请输入账户绑定的邮箱") },
+                label = { Text("密码") },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true,
+                singleLine = true,//是否单行文本
+                visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 leadingIcon = {
-                    Icon(Icons.Filled.Email, contentDescription = "Email Icon")
+                    Icon(Icons.Filled.Lock, contentDescription = "Password Icon")
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = if (passwordVisible.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        contentDescription = "切换密码可见性",
+                        modifier = Modifier.clickable { passwordVisible.value = !passwordVisible.value }
+                    )
                 },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color(0xFF2575FC),
@@ -118,21 +134,31 @@ fun RetrievePasswordCompose(
                     focusedLabelColor = Color(0xFF2575FC),
                     cursorColor = Color(0xFF2575FC)
                 ),
-                isError = retrievePasswordError != null
+                isError = setNewPasswordError != null
             )
             Spacer(modifier = Modifier.height(16.dp))
+            //确认密码输入框
             OutlinedTextField(
-                value = userPhone.value,
+                value = confirmPassword.value,
                 onValueChange = { newValue ->
-                    userPhone.value = newValue.filter { it.isDigit() }
-                    if (retrievePasswordError != null) viewModel.clearRetrievePasswordError()
+                    confirmPassword.value = newValue
+                    if (setNewPasswordError != null) viewModel.clearSetNewPasswordError()
                 },
-                label = { Text("请输入账户绑定的手机号") },
+                label = { Text("确认密码")},
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                singleLine = true,//是否单行文本
+                visualTransformation = if (confirmPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+
                 leadingIcon = {
-                    Icon(Icons.Filled.PhoneAndroid, contentDescription = "Phone Icon")
+                    Icon(Icons.Filled.Lock, contentDescription = "Password Icon")
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = if (confirmPasswordVisible.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        contentDescription = "切换密码可见性",
+                        modifier = Modifier.clickable { confirmPasswordVisible.value = !confirmPasswordVisible.value }
+                    )
                 },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color(0xFF2575FC),
@@ -140,11 +166,11 @@ fun RetrievePasswordCompose(
                     focusedLabelColor = Color(0xFF2575FC),
                     cursorColor = Color(0xFF2575FC)
                 ),
-                isError = retrievePasswordError != null
+                isError = setNewPasswordError != null
             )
-            if (retrievePasswordError != null) {
+            if (setNewPasswordError != null) {
                 Text(
-                    text = retrievePasswordError ?: "",
+                    text = setNewPasswordError ?: "",
                     color = Color.Red,
                     fontSize = 14.sp,
                     modifier = Modifier
@@ -154,7 +180,7 @@ fun RetrievePasswordCompose(
             }
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { viewModel.verifyAccount(userEmail.value,userPhone.value) },
+                onClick = { viewModel.setNewPassword(id,newPassword.value,confirmPassword.value) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -164,22 +190,22 @@ fun RetrievePasswordCompose(
                 ),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = "验证", fontSize = 16.sp)
+                Text(text = "确认", fontSize = 16.sp)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "返回登录",
+                text = "返回上一步",
                 color = Color(0xFF2575FC),
                 fontSize = 14.sp,
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier
+                    .align(Alignment.End)
                     .clickable {
-                        // 跳转到用户登录页面
-                        navController.navigate(Routes.LOGIN)
+                        // 跳转到用户验证邮箱与电话号码页面
+                        navController.navigate(Routes.RETRIEVE_PASSWORD)
                     }
             )
         }
     }
-
 }
 
 @Preview(
@@ -188,8 +214,8 @@ fun RetrievePasswordCompose(
 )
 
 @Composable
-fun PreviewRetrievePasswordCompose() {
+fun PreviewSetNewPasswordCompose() {
     LibraryGoTheme {
-        RetrievePasswordCompose(navController = rememberNavController())
+        SetNewPasswordCompose(navController = rememberNavController(),"1234")
     }
 }

@@ -1,5 +1,6 @@
-package com.clife.librarygo.compose
+package com.clife.librarygo.ui.screen.home
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
@@ -23,7 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.clife.librarygo.ui.theme.LibraryGoTheme
-import com.clife.librarygo.viewmodel.HomeViewModel
+import com.clife.librarygo.viewmodel.home.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,7 +88,7 @@ fun HomeCompose(
 
 
 @Composable
-fun HomeTabContent(paddingValues: androidx.compose.foundation.layout.PaddingValues) {
+fun HomeTabContent(paddingValues: PaddingValues) {
     Text(
         text = "首页内容",
         modifier = Modifier.padding(paddingValues),
@@ -96,7 +97,7 @@ fun HomeTabContent(paddingValues: androidx.compose.foundation.layout.PaddingValu
 }
 
 @Composable
-fun DiscoverTabContent(paddingValues: androidx.compose.foundation.layout.PaddingValues) {
+fun DiscoverTabContent(paddingValues: PaddingValues) {
     Text(
         text = "发现页内容",
         modifier = Modifier.padding(paddingValues),
@@ -105,7 +106,7 @@ fun DiscoverTabContent(paddingValues: androidx.compose.foundation.layout.Padding
 }
 
 @Composable
-fun BookshelfTabContent(paddingValues: androidx.compose.foundation.layout.PaddingValues) {
+fun BookshelfTabContent(paddingValues: PaddingValues) {
     Text(
         text = "我的书架内容",
         modifier = Modifier.padding(paddingValues),
@@ -114,7 +115,7 @@ fun BookshelfTabContent(paddingValues: androidx.compose.foundation.layout.Paddin
 }
 
 @Composable
-fun ProfileTabContent(paddingValues: androidx.compose.foundation.layout.PaddingValues) {
+fun ProfileTabContent(paddingValues: PaddingValues) {
     Text(
         text = "个人中心内容",
         modifier = Modifier.padding(paddingValues),

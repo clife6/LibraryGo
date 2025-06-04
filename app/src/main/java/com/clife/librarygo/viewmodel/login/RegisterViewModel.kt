@@ -1,5 +1,6 @@
-package com.clife.librarygo.viewmodel
+package com.clife.librarygo.viewmodel.login
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clife.librarygo.data.RetrofitClient
 import com.clife.librarygo.data.entity.UserRequest
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
- class RegisterViewModel : androidx.lifecycle.ViewModel() {
+ class RegisterViewModel : ViewModel() {
 
      // 导航事件
      private val _navigateTo = MutableSharedFlow<String>()

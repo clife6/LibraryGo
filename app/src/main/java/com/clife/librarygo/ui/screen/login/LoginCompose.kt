@@ -1,4 +1,4 @@
-package com.clife.librarygo.compose
+package com.clife.librarygo.ui.screen.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,8 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -49,24 +50,25 @@ import androidx.navigation.compose.rememberNavController
 import com.clife.librarygo.R
 import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
-import com.clife.librarygo.viewmodel.AdminLoginViewModel
+import com.clife.librarygo.viewmodel.login.LoginViewModel
 import kotlinx.coroutines.flow.collectLatest
 
+
 @Composable
-fun AdminLoginCompose(
+fun LoginCompose(
     navController: NavController,
-    viewModel: AdminLoginViewModel = viewModel(),
-){
-    val adminName = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-    val passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
+    viewModel: LoginViewModel = viewModel(),
+) {
+    var username = remember { mutableStateOf("") }
+    var password = remember { mutableStateOf("") }
+    var passwordVisible = remember { mutableStateOf(false) }//控制密码是否显示为明文
 
     val loginError by viewModel.loginError.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collectLatest { route ->
             navController.navigate(route) {
-                popUpTo(Routes.LOGIN_ADMIN) { inclusive = true }
+                popUpTo(Routes.LOGIN) { inclusive = true }
                 launchSingleTop = true
             }
         }
@@ -79,7 +81,7 @@ fun AdminLoginCompose(
                 Color(0xFF2575FC)
             ),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .padding(horizontal = 24.dp) // 水平方向 padding
@@ -89,7 +91,7 @@ fun AdminLoginCompose(
                 .padding(24.dp), // 内边距
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
-        ){
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "App Logo",
@@ -97,23 +99,23 @@ fun AdminLoginCompose(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "管理员登录",
+                text = "图书借阅管理系统",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2575FC)
             )
             Spacer(modifier = Modifier.height(32.dp))
             OutlinedTextField(
-                value = adminName.value,
+                value = username.value,
                 onValueChange = { newValue ->
-                    adminName.value = newValue
+                    username.value = newValue
                     if (loginError != null) viewModel.clearLoginError()
                 },
-                label = { Text("管理员") },
+                label = { Text("用户名") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 leadingIcon = {
-                    Icon(Icons.Filled.AdminPanelSettings, contentDescription = "AdminName Icon")
+                    Icon(Icons.Filled.Person, contentDescription = "Username Icon")
                 },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color(0xFF2575FC),
@@ -142,7 +144,9 @@ fun AdminLoginCompose(
                     Icon(
                         imageVector = if (passwordVisible.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                         contentDescription = "切换密码可见性",
-                        modifier = Modifier.clickable { passwordVisible.value = !passwordVisible.value }
+                        modifier = Modifier.clickable {
+                            passwordVisible.value = !passwordVisible.value
+                        }
                     )
                 },
                 colors = TextFieldDefaults.colors(
@@ -155,17 +159,15 @@ fun AdminLoginCompose(
             )
             if (loginError != null) {
                 Text(
-                    text = loginError ?: "",
+                    text = loginError ?: "登录失败",
                     color = Color.Red,
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .align(Alignment.Start)
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(top = 8.dp)
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { viewModel.login(adminName.value, password.value) },
+                onClick = { viewModel.login(username.value, password.value) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -178,14 +180,39 @@ fun AdminLoginCompose(
                 Text(text = "登录", fontSize = 16.sp)
             }
             Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "没有账号? 立即注册",
+                    color = Color(0xFF2575FC),
+                    fontSize = 14.sp,
+                    modifier = Modifier.clickable {
+                        // 处理注册点击事件
+                        navController.navigate(Routes.REGISTER)
+                    }
+                )
+                Text(
+                    text = "忘记密码?",
+                    color = Color(0xFF2575FC),
+                    fontSize = 14.sp,
+                    modifier = Modifier.clickable {
+                        // 跳转到找回密码页面
+                        navController.navigate(Routes.RETRIEVE_PASSWORD)
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "用户登录",
+                text = "管理员登录",
                 color = Color(0xFF2575FC),
                 fontSize = 14.sp,
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier
+                    .align(Alignment.End)
                     .clickable {
-                        // 跳转到用户登录页面
-                        navController.navigate(Routes.LOGIN)
+                        // 跳转到管理员登录页面
+                        navController.navigate(Routes.LOGIN_ADMIN)
                     }
             )
         }
@@ -194,12 +221,12 @@ fun AdminLoginCompose(
 
 @Preview(
     showBackground = true,
-    showSystemUi = true
-)
+    showSystemUi = true,
 
+)
 @Composable
-fun PreviewAdminLoginCompose() {
+fun PreviewLoginCompose() {
     LibraryGoTheme {
-        AdminLoginCompose(navController = rememberNavController())
+        LoginCompose(navController = rememberNavController())
     }
 }

@@ -1,4 +1,4 @@
-package com.clife.librarygo.compose
+package com.clife.librarygo
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,10 +22,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.clife.librarygo.R
 import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
-import com.clife.librarygo.viewmodel.WelcomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 

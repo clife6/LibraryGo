@@ -1,4 +1,4 @@
-package com.clife.librarygo.viewmodel
+package com.clife.librarygo.viewmodel.home
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

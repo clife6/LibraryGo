@@ -6,13 +6,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.clife.librarygo.compose.AdminLoginCompose
-import com.clife.librarygo.compose.LoginCompose
-import com.clife.librarygo.compose.WelcomeCompose
-import com.clife.librarygo.compose.HomeCompose
-import com.clife.librarygo.compose.RegisterCompose
-import com.clife.librarygo.compose.RetrievePasswordCompose
-import com.clife.librarygo.compose.SetNewPasswordCompose
+import com.clife.librarygo.ui.screen.login.AdminLoginCompose
+import com.clife.librarygo.ui.screen.login.LoginCompose
+import com.clife.librarygo.WelcomeCompose
+import com.clife.librarygo.ui.screen.home.HomeCompose
+import com.clife.librarygo.ui.screen.login.RegisterCompose
+import com.clife.librarygo.ui.screen.login.RetrievePasswordCompose
+import com.clife.librarygo.ui.screen.login.SetNewPasswordCompose
 
 
 @Composable
