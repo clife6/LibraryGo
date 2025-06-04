@@ -27,7 +27,7 @@ class LoginViewModel() : ViewModel(){
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if(it.code == 1){
-                            _navigateTo.emit(Routes.HOME) // 登录成功，导航到主页
+                            _navigateTo.emit(Routes.homeWithId("1")) // 登录成功，导航到主页
                         }
                     }
                 } else {

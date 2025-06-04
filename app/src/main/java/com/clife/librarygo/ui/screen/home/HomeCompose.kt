@@ -30,6 +30,7 @@ import com.clife.librarygo.viewmodel.home.HomeViewModel
 @Composable
 fun HomeCompose(
     navController: NavController,
+    id: String,
     viewModel: HomeViewModel = viewModel(),
 ) {
     val items = listOf("首页", "发现", "书架", "我的")
@@ -131,6 +132,6 @@ fun ProfileTabContent(paddingValues: PaddingValues) {
 @Composable
 fun PreviewHomeCompose() {
     LibraryGoTheme {
-        HomeCompose(navController = rememberNavController())
+        HomeCompose(navController = rememberNavController(),"1")
     }
 }

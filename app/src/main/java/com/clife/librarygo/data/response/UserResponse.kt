@@ -28,4 +28,12 @@ sealed class UserResponse {
         val message: String? = null,
         val error: String? = null,
     )
+
+    //管理员登录的响应
+    data class LoginAdminResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+        val id: Long? = null,
+    )
 }

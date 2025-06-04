@@ -27,9 +27,9 @@ class RetrievePasswordViewModel : ViewModel()   {
                 return@launch
             }
             try {
-                val id = RetrofitClient.userService.checkUserEmailAndPhone(userEmail, userPhone)
-                if(id.isSuccessful){
-                    id.body()?.let {
+                val response = RetrofitClient.userService.checkUserEmailAndPhone(userEmail, userPhone)
+                if(response.isSuccessful){
+                    response.body()?.let {
                         if (it.code == 1) {
                             _navigateTo.emit(Routes.setNewPasswordWithId(it.id.toString()))
                         }else if (it.code == 0) {

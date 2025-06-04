@@ -29,8 +29,16 @@ fun LibraryNavGraph(
         composable(Routes.LOGIN) {
             LoginCompose(navController = navController)
         }
-        composable(Routes.HOME) {
-            HomeCompose(navController = navController)
+        composable(
+            "${Routes.HOME}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        ){
+            backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            HomeCompose(
+                navController = navController,
+                id = id  // 传递非空参数
+            )
         }
         composable(Routes.REGISTER) {
             RegisterCompose(navController = navController)

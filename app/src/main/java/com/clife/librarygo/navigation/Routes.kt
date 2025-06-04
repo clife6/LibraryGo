@@ -6,6 +6,7 @@ object Routes {
     const val LOGIN = "login"
     const val LOGIN_ADMIN = "login_admin"
     const val HOME = "home"
+    fun homeWithId(id: String) = "$HOME/$id"
     const val REGISTER = "register"
     const val RETRIEVE_PASSWORD = "retrieve password"
     const val SET_NEW_PASSWORD = "set_new_password"
