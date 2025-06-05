@@ -13,4 +13,16 @@ interface BookService {
         @Query("author") author: String,
     ): Response<BookResponse.SearchBookResponse>
 
+    // 查询借阅的图书信息通过用户ID
+    @GET("/book/searchBorrow")
+    suspend fun searchBorrow(
+        @Query("userId") userId: String,
+    ): Response<BookResponse.SearchBorrowByIdResponse>
+
+
+    // 查询图书信息通过书籍Uid
+    @GET("/book/searchBookByUid")
+    suspend fun searchBookByUid(
+        @Query("uid") uid: String,
+    ): Response<BookResponse.SearchBookByUidResponse>
 }

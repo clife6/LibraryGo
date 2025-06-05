@@ -200,7 +200,7 @@ class RegisterViewModel : ViewModel() {
              // 注册成功后清除错误状态
              _formState.value = state.copy(formError = false)
          } catch (e: Exception) {
-             _formState.value.copy(registerErrorMessage = "注册失败: ${e.message}",
+             _formState.value.copy(registerErrorMessage = "错误信息: ${e.message}",
                  registerError = true,
              )
          }
