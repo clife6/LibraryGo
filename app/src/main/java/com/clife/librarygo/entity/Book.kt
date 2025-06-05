@@ -10,4 +10,11 @@ sealed class Book {
 //        val isRead: Boolean = false,
 //        val isFavorite: Boolean = false,
     )
+
+    data class BookInSearch(
+        val id: Long, //id
+        val title: String, //书名
+        val author: String, //作者
+        val coverUrl: String, //封面图片地址
+    )
 }

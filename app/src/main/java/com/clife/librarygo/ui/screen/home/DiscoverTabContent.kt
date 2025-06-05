@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,16 +51,18 @@ fun DiscoverTabContent(
     viewModel: DiscoverTabContentViewModel = viewModel(),
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    val isLoading by viewModel.isLoading.collectAsState()
+    val books by viewModel.Books.collectAsState()
     val allBooks = remember {
         listOf(
             Book("1", "Kotlin编程", "张三", "", 4.5f, 2020),
-            Book("2", "Jetpack Compose指南", "李四", "", 4.8f, 2021),
-            Book("3", "Android开发艺术", "王五", "", 4.2f, 2019),
-            Book("4", "Compose设计模式", "赵六", "", 4.7f, 2022),
-            Book("5", "Kotlin协程", "钱七", "", 4.3f, 2021),
-            Book("6", "Android性能优化", "孙八", "", 4.6f, 2020),
-            Book("7", "Material Design 3", "周九", "", 4.9f, 2022),
-            Book("8", "Android架构", "吴十", "", 4.4f, 2021)
+//            Book("2", "Jetpack Compose指南", "李四", "", 4.8f, 2021),
+//            Book("3", "Android开发艺术", "王五", "", 4.2f, 2019),
+//            Book("4", "Compose设计模式", "赵六", "", 4.7f, 2022),
+//            Book("5", "Kotlin协程", "钱七", "", 4.3f, 2021),
+//            Book("6", "Android性能优化", "孙八", "", 4.6f, 2020),
+//            Book("7", "Material Design 3", "周九", "", 4.9f, 2022),
+//            Book("8", "Android架构", "吴十", "", 4.4f, 2021)
         )
     }
     val filteredBooks = remember(searchQuery, allBooks) {
@@ -159,16 +162,13 @@ fun BookItem(
                     tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
-
             Spacer(modifier = Modifier.height(8.dp))
-
             Text(
                 text = book.title,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-
             Text(
                 text = book.author,
                 style = MaterialTheme.typography.bodySmall,
@@ -179,7 +179,6 @@ fun BookItem(
         }
     }
 }
-
 
 @Preview(
     showBackground = true,
