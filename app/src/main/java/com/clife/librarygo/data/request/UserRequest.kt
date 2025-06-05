@@ -7,7 +7,7 @@ sealed class UserRequest {
         val id: String,
         val newPassword: String
     )
-
+    
     data class AddUserRequest(
         val username: String,
         val password: String,
