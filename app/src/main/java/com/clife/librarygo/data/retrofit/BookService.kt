@@ -11,6 +11,6 @@ interface BookService {
     suspend fun searchBookByTitleOrAuthor(
         @Query("title") title: String,
         @Query("author") author: String,
-    ): Response<List<BookResponse.SearchBookResponse>>
+    ): Response<BookResponse.SearchBookResponse>
 
 }

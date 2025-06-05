@@ -1,23 +1,65 @@
 package com.clife.librarygo.viewmodel.home
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.clife.librarygo.data.RetrofitClient
 import com.clife.librarygo.entity.Book
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class DiscoverTabContentViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
-    private var _Books = MutableStateFlow<List<Book.BookInSearch>>(emptyList())
-    val Books = _Books.asStateFlow()
+    private val _count = MutableStateFlow(-1)
+    val count = _count.asStateFlow()
+
+    private var _books = MutableStateFlow<List<Book.BookInSearch>>(emptyList())
+    val books = _books.asStateFlow()
+
+    private val _discoverTabContentError = MutableStateFlow<String?>(null)
+    val discoverTabContentError = _discoverTabContentError.asStateFlow()
 
     fun searchBooks(query: String) {
-        _isLoading.value = true
-        // 这里可以添加实际的搜索逻辑，比如调用API获取数据
-        // 目前使用静态数据模拟
-        _isLoading.value = false
+        viewModelScope.launch {
+            _discoverTabContentError.value = null
+            _isLoading.value = true
+            _count.value = -1
+            _books.value = emptyList()
+            try {
+                val response = RetrofitClient.bookService.searchBookByTitleOrAuthor(query, query)
+                if (!response.isSuccessful || response.body() == null) {
+                    _discoverTabContentError.value = "网络请求失败，请稍后再试"
+                    _isLoading.value = false
+                    return@launch
+                }
+                when (response.body()?.code) {
+                    1 -> {
+                        _count.value = response.body()?.count ?: 0
+                        _books.value = response.body()?.books ?: emptyList()
+                        _discoverTabContentError.value = null
+                    }
+                    0 -> {
+                        _count.value = 0
+                        _books.value = emptyList()
+                        _discoverTabContentError.value = null
+                    }
+                    else -> {
+                        _count.value = -1
+                        _books.value = emptyList()
+                        _discoverTabContentError.value = "查询失败，请稍后再试"
+                    }
+                }
+            }catch (e: Exception){
+                _discoverTabContentError.value = "错误信息: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 
-
+    fun clearRetrievePasswordError() {
+        _discoverTabContentError.value = null
+    }
 }

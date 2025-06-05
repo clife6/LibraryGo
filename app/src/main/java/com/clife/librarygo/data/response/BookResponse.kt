@@ -7,6 +7,7 @@ sealed class BookResponse {
         val code: Int,
         val message: String? = null,
         val error: String? = null,
-        val books: List<Book.BookInSearch>? = null
+        val count: Int? = null,
+        val books: List<Book.BookInSearch>? = null,
     )
 }
