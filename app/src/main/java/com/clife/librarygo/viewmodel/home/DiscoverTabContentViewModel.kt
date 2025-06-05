@@ -28,7 +28,7 @@ class DiscoverTabContentViewModel : ViewModel() {
             _count.value = -1
             _books.value = emptyList()
             try {
-                val response = RetrofitClient.bookService.searchBookByTitleOrAuthor(query, query)
+                val response = RetrofitClient.bookService.searchBookByTitleOrAuthor(query)
                 if (!response.isSuccessful || response.body() == null) {
                     _discoverTabContentError.value = "网络请求失败，请稍后再试"
                     _isLoading.value = false

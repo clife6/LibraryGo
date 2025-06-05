@@ -9,8 +9,7 @@ interface BookService {
     // 查询图书信息通过书名或作者名
     @GET("/book/searchBookByTitleOrAuthor")
     suspend fun searchBookByTitleOrAuthor(
-        @Query("title") title: String,
-        @Query("author") author: String,
+        @Query("keyword") keyword: String,
     ): Response<BookResponse.SearchBookResponse>
 
 }
