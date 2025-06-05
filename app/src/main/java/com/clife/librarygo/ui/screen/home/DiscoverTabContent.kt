@@ -76,7 +76,7 @@ fun DiscoverTabContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(paddingValues) // 关键：应用 Scaffold 的 contentPadding
     ) {
         // 搜索栏
         SearchBar(
@@ -84,24 +84,17 @@ fun DiscoverTabContent(
             onQueryChange = { searchQuery = it },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp) // 添加内部边距
         )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // 图书列表
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp), // 网格内容内边距
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(filteredBooks.size) { index ->
-                val book = filteredBooks[index]
-                BookItem(
-                    book = book,
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { }
-                )
+                BookItem(book = filteredBooks[index], onClick = {})
             }
         }
     }
