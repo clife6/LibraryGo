@@ -40,22 +40,22 @@ fun HomeCompose(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                colors = topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                // 给topBar下方增加阴影
-                modifier = Modifier.shadow(16.dp),
-                title = {
-                    when (selectedTabIndex) {
-                        0 -> HomeTabHeader(id)
-                        1 -> DiscoverTabHeader(id)
-                        2 -> BookshelfTabHeader(id)
-                        3 -> ProfileTabHeader(id)
-                    }
-                },
-            )
+            if (selectedTabIndex != 1) {
+                TopAppBar(
+                    colors = topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier.shadow(16.dp),
+                    title = {
+                        when (selectedTabIndex) {
+                            0 -> HomeTabHeader(id)
+                            2 -> BookshelfTabHeader(id)
+                            3 -> ProfileTabHeader(id)
+                        }
+                    },
+                )
+            }
         },
         bottomBar = {
             NavigationBar {
