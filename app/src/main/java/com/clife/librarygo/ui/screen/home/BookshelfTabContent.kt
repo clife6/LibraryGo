@@ -34,10 +34,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
+import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
 import com.clife.librarygo.viewmodel.home.BookshelfTabContentViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun BookshelfTabHeader(
@@ -52,6 +55,7 @@ fun BookshelfTabHeader(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookshelfTabContent(
+    navController: NavController,
     paddingValues: PaddingValues,
     id: String,
     viewModel: BookshelfTabContentViewModel = viewModel()
@@ -69,7 +73,7 @@ fun BookshelfTabContent(
 
     val onRefresh: () -> Unit = {
         val now = System.currentTimeMillis()
-        if (now - lastRefreshTime.longValue < 1000) {
+        if (now - lastRefreshTime.longValue < 500) { //0.5秒防抖
             showDebounceDialog.value = true
         }else{
             lastRefreshTime.longValue = now
@@ -79,8 +83,16 @@ fun BookshelfTabContent(
         }
     }
 
+    // 监听图书信息变化
     LaunchedEffect(id) {
         viewModel.refreshBookshelf(id)
+    }
+
+    // 监听导航事件
+    LaunchedEffect(Unit) {
+        viewModel.navigateTo.collectLatest { route ->
+            navController.navigate(route)
+        }
     }
 
     // 错误弹窗
@@ -106,7 +118,7 @@ fun BookshelfTabContent(
         AlertDialog(
             onDismissRequest = { showDebounceDialog.value = false },
             title = { Text("提示") },
-            text = { Text("请不要频繁刷新\n刷新间隔为1s") },
+            text = { Text("请不要频繁刷新\n刷新间隔为0.5s") },
             confirmButton = {
                 Button(onClick = { showDebounceDialog.value = false }) {
                     Text("确定")
@@ -115,84 +127,93 @@ fun BookshelfTabContent(
         )
     }
 
-    PullToRefreshBox(
-        isRefreshing = isRefreshing.value,
-        onRefresh = onRefresh,
-        modifier = Modifier.padding(),
-        state = state,
-        indicator =  {
-            Indicator(
-                modifier = Modifier.align(Alignment.TopCenter),
-                isRefreshing = isRefreshing.value,
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                state = state
-            )
-        },
-    ){
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxWidth()
-        ) {
-            if (books.isEmpty()){
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp), // 保证有下拉区域
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "暂无图书，试试下拉刷新",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color(0xFF3A86B6)
-                        )
-                    }
-                }
-            }else{
-                for (book in books) {
-                    item(key = book.uid) {
-                        //展示book内容
-                        Card(
+    Box(modifier = Modifier.fillMaxWidth()){
+        PullToRefreshBox(
+            isRefreshing = isRefreshing.value,
+            onRefresh = onRefresh,
+            modifier = Modifier.padding(),
+            state = state,
+            indicator =  {
+                Indicator(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    isRefreshing = isRefreshing.value,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    state = state
+                )
+            },
+        ){
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxWidth()
+            ) {
+                if (books.isEmpty()){
+                    item {
+                        Box(
                             modifier = Modifier
-                                .padding(horizontal = 3.dp, vertical = 3.dp)
-                                .fillMaxWidth(),
-                            colors = CardDefaults.cardColors(Color(0xFFFAF8FF)),
-                            onClick = { /* 点击事件 */ }
+                                .fillMaxWidth()
+                                .height(300.dp), // 保证有下拉区域
+                            contentAlignment = Alignment.Center
                         ) {
-                            Row{
-                                AsyncImage(
-                                    model = book.work_image_url,
-                                    contentDescription = "Book Cover",
-                                    modifier = Modifier
-                                        .padding(start = 4.dp, top = 9.dp, bottom = 9.dp)
-                                        .size(120.dp) // 可选，设置图片大小
-                                )
-                                Column(
-                                    modifier = Modifier.padding(16.dp)
-                                ) {
-                                    Text(
-                                        text = book.title,
-                                        style = MaterialTheme.typography.titleLarge,
-                                        color = Color(0xFF3A86B6)
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = "作者: ${book.author}",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = Color(0xFF201616)
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = "出版社: ${book.publisher}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = Color(0xFF888888)
+                            Text(
+                                text = "暂无图书，试试下拉刷新",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = Color(0xFF3A86B6)
+                            )
+                        }
+                    }
+                }else{
+                    for (book in books) {
+                        item(key = book.uid) {
+                            //展示book内容
+                            Card(
+                                modifier = Modifier
+                                    .padding(horizontal = 3.dp, vertical = 3.dp)
+                                    .fillMaxWidth(),
+                                colors = CardDefaults.cardColors(Color(0xFFFAF8FF)),
+                                onClick = {
+                                    navController.navigate(
+                                        Routes.bookDetailWithIdAndUid(
+                                            id,
+                                            book.uid.toString()
+                                        )
                                     )
                                 }
+                            ) {
+                                Row{
+                                    AsyncImage(
+                                        model = book.work_image_url,
+                                        contentDescription = "Book Cover",
+                                        modifier = Modifier
+                                            .padding(start = 4.dp, top = 9.dp, bottom = 9.dp)
+                                            .size(120.dp) // 可选，设置图片大小
+                                    )
+                                    Column(
+                                        modifier = Modifier.padding(16.dp)
+                                    ) {
+                                        Text(
+                                            text = book.title,
+                                            style = MaterialTheme.typography.titleLarge,
+                                            color = Color(0xFF3A86B6)
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "作者: ${book.author}",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = Color(0xFF201616)
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "出版社: ${book.publisher}",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = Color(0xFF888888)
+                                        )
+                                    }
+                                }
                             }
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
