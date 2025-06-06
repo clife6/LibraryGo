@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clife.librarygo.data.RetrofitClient
 import com.clife.librarygo.entity.Book
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +19,12 @@ class BookshelfTabContentViewModel : ViewModel() {
     private val _books = MutableStateFlow<List<Book.BookInBookshelf>>(emptyList())
     val books = _books.asStateFlow()
 
-    var bookList = mutableListOf<Book.BookInBookshelf>() // 可变列表用于暂时存储书架中的图书信息
+    // 用于控制图书信息的加载状态
+    private var fetchJob: Job? = null
+    private var fetchSeq = 0 // 请求序号
+
+    // 标志位，表示是否已经加载过书架
+    private var isLoaded = false
 
     // 加载借阅图书的Uid
     suspend fun getBookUid(userId: String): List<String> {
@@ -62,15 +68,41 @@ class BookshelfTabContentViewModel : ViewModel() {
 
     // 加载书架中的图书信息
     fun loadBookshelf(userId: String) {
-        viewModelScope.launch {
-            bookList.clear()
+        if (!isLoaded){
+            isLoaded = true
+            fetchBooks(userId)
+        }
+    }
+
+    // 刷新书架
+    fun refreshBookshelf(userId: String) {
+        loadBookshelf(userId)
+    }
+
+    // 下拉刷新书架
+    fun pullToRefresh(userId: String) {
+        fetchBooks(userId)
+    }
+
+    // 获取书架中的图书信息
+    private fun fetchBooks(userId: String) {
+        fetchJob?.cancel()
+        val currentSeq = ++fetchSeq
+        fetchJob = viewModelScope.launch {
+            val tempList = mutableListOf<Book.BookInBookshelf>()
             val uIDS = getBookUid(userId)
             for (uid in uIDS) {
-                getBookByUid(uid)?.let { bookList.add(it) }
+                getBookByUid(uid)?.let { tempList.add(it) }
             }
-            _books.value = bookList.toList()
-            if (bookList.isEmpty()) {
-                _errorMessage.value = "暂无图书"
+            // 只处理最新请求的结果
+            if (currentSeq == fetchSeq) {
+                if (tempList.isNotEmpty()) {
+                    _books.value = tempList
+                    _errorMessage.value = null
+                } else {
+                    // 不清空 books，只弹窗
+                    _errorMessage.value = "暂无图书"
+                }
             }
         }
     }
