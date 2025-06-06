@@ -73,10 +73,10 @@ fun HomeCompose(
     ) { contentPadding ->
         // 根据选中的标签显示不同的内容
         when (selectedTabIndex) {
-            0 -> HomeTabContent(contentPadding,id)
-            1 -> DiscoverTabContent(contentPadding,id)
-            2 -> BookshelfTabContent(contentPadding,id)
-            3 -> ProfileTabContent(contentPadding,id)
+            0 -> HomeTabContent(contentPadding, id)
+            1 -> DiscoverTabContent(navController, contentPadding, id)
+            2 -> BookshelfTabContent(contentPadding, id)
+            3 -> ProfileTabContent(contentPadding, id)
         }
     }
 }

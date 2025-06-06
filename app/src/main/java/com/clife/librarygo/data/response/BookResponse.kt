@@ -18,4 +18,12 @@ sealed class BookResponse {
         val error: String? = null,
         val book: Book.BookInBookshelf? = null
     )
+
+    //查询图书详细信息通过Uid
+    data class SearchBookDetailByUidResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+        val bookDetail: Book.BookDetail? = null
+    )
 }
