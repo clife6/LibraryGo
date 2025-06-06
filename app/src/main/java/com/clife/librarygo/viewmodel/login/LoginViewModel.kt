@@ -59,7 +59,7 @@ class LoginViewModel() : ViewModel(){
                 if (response.isSuccessful) {
                     response.body()?.let {
                         when (it.code) {
-                            1 -> _navigateTo.emit(Routes.homeWithId("1")) // 登录成功，导航到主页
+                            1 -> _navigateTo.emit(Routes.homeWithId(it.id.toString())) // 登录成功，导航到主页
                             0 -> _formState.value = _formState.value.copy(
                                 loginError = true,
                                 loginErrorMessage = "账号或密码错误"

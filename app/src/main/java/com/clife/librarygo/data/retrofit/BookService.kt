@@ -1,6 +1,7 @@
 package com.clife.librarygo.data.retrofit
 
 import com.clife.librarygo.data.response.BookResponse
+import com.clife.librarygo.data.response.BorrowResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -11,12 +12,6 @@ interface BookService {
     suspend fun searchBookByTitleOrAuthor(
         @Query("keyword") keyword: String,
     ): Response<BookResponse.SearchBookResponse>
-
-    // 查询借阅的图书信息通过用户ID
-    @GET("/book/searchBorrow")
-    suspend fun searchBorrow(
-        @Query("userId") userId: String,
-    ): Response<BookResponse.SearchBorrowByIdResponse>
 
 
     // 查询图书信息通过书籍Uid

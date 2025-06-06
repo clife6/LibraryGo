@@ -87,7 +87,7 @@ fun BookshelfTabContent(
                 ) {
                     Row{
                         AsyncImage(
-                            model = book.coverUrl,
+                            model = book.work_image_url,
                             contentDescription = "Book Cover",
                             modifier = Modifier
                                 .padding(start = 4.dp, top = 9.dp, bottom = 9.dp)

@@ -23,11 +23,11 @@ class BookshelfTabContentViewModel : ViewModel() {
     // 加载借阅图书的Uid
     suspend fun getBookUid(userId: String): List<String> {
         return try {
-            val borrowResponse = RetrofitClient.bookService.searchBorrow(userId)
+            val borrowResponse = RetrofitClient.borrowService.searchBorrow(userId)
             if (borrowResponse.isSuccessful) {
                 borrowResponse.body()?.let {
                     if (it.code == 1) {
-                        it.books?.map { book -> book.uid } ?: emptyList()
+                        it.books?.map { book -> book.book_uid } ?: emptyList()
                     } else {
                         _errorMessage.value = it.error ?: "获取借阅信息失败"
                         emptyList()
