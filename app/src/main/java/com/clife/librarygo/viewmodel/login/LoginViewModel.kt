@@ -55,7 +55,8 @@ class LoginViewModel() : ViewModel(){
             _isLoading.value = true
             try {
                 val response = RetrofitClient.userService.loginUser(
-                    UserRequest.LoginUserRequest(_formState.value.username, _formState.value.password))
+                    UserRequest.LoginUserRequest(_formState.value.username, _formState.value.password)
+                )
                 if (response.isSuccessful) {
                     response.body()?.let {
                         when (it.code) {
