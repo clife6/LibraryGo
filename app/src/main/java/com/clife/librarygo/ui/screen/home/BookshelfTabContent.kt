@@ -109,7 +109,7 @@ fun BookshelfTabContent(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "作者: ${book.publisher}",
+                                text = "出版社: ${book.publisher}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color(0xFF888888)
                             )
