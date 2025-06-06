@@ -24,6 +24,6 @@ sealed class BookResponse {
         val code: Int,
         val message: String? = null,
         val error: String? = null,
-        val bookDetail: Book.BookDetail? = null
+        val book: Book.BookDetail? = null
     )
 }
