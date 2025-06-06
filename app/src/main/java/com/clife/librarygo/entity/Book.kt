@@ -20,10 +20,27 @@ sealed class Book {
         val return_date: String, //归还时间
     )
 
+    // 搜索结果中的书籍信息
     data class BookInSearch(
         val uid: Long, //uid
         val title: String, //书名
         val author: String, //作者
         val coverUrl: String, //封面图片地址
+    )
+
+    // 书籍详情
+    data class BookDetail(
+        val uid: Long, //uid
+        val title: String, //书名
+        val author: String, //作者
+        val coverUrl: String, //封面图片地址
+        val publisher: String, //出版社
+        val productionCompany: String, //出品方
+        val publicationYear: String, //出版年份
+        val pages: Int, //页数
+        val price: String, //定价
+        val binding: String, //装帧
+        val series: String, //丛书
+        val isbn: String, //ISBN
     )
 }
