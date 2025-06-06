@@ -28,6 +28,11 @@ class DiscoverTabContentViewModel : ViewModel() {
             _count.value = -1
             _books.value = emptyList()
             try {
+                if (query.isBlank()) {
+                    _discoverTabContentError.value = "搜索关键词不能为空"
+                    _isLoading.value = false
+                    return@launch
+                }
                 val response = RetrofitClient.bookService.searchBookByTitleOrAuthor(query)
                 if (!response.isSuccessful || response.body() == null) {
                     _discoverTabContentError.value = "网络请求失败，请稍后再试"
@@ -38,20 +43,13 @@ class DiscoverTabContentViewModel : ViewModel() {
                     1 -> {
                         _count.value = response.body()?.count ?: 0
                         _books.value = response.body()?.books ?: emptyList()
-                        _discoverTabContentError.value = null
                     }
-                    0 -> {
-                        _count.value = 0
-                        _books.value = emptyList()
-                        _discoverTabContentError.value = null
-                    }
-                    else -> {
-                        _count.value = -1
-                        _books.value = emptyList()
-                        _discoverTabContentError.value = "查询失败，请稍后再试"
-                    }
+
+                    0 -> _count.value = 0
+                    -1 -> _discoverTabContentError.value = "搜索关键词不能为空"
+                    else -> _discoverTabContentError.value = "查询失败，请稍后再试"
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 _discoverTabContentError.value = "错误信息: ${e.message}"
             } finally {
                 _isLoading.value = false
