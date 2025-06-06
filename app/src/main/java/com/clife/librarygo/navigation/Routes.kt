@@ -11,4 +11,6 @@ object Routes {
     const val RETRIEVE_PASSWORD = "retrieve password"
     const val SET_NEW_PASSWORD = "set_new_password"
     fun setNewPasswordWithId(id: String) = "$SET_NEW_PASSWORD/$id"
+    const val BOOK_DETAIL = "book_detail"
+    fun bookDetailWithIdAndUid(id: String, uid: String) = "$BOOK_DETAIL/$id/$uid"
 }

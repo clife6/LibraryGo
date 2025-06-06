@@ -18,4 +18,10 @@ interface BookService {
     suspend fun searchBookByUid(
         @Query("uid") uid: String,
     ): Response<BookResponse.SearchBookByUidResponse>
+
+    // 查询图书详细信息通过Uid
+    @GET("/book/searchBookDetailByUid")
+    suspend fun searchBookDetailByUid(
+        @Query("uid") uid: String,
+    ): Response<BookResponse.SearchBookDetailByUidResponse>
 }

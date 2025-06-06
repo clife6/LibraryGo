@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.clife.librarygo.ui.screen.login.AdminLoginCompose
 import com.clife.librarygo.ui.screen.login.LoginCompose
 import com.clife.librarygo.ui.screen.WelcomeCompose
+import com.clife.librarygo.ui.screen.home.BookDetailCompose
 import com.clife.librarygo.ui.screen.home.HomeCompose
 import com.clife.librarygo.ui.screen.login.RegisterCompose
 import com.clife.librarygo.ui.screen.login.RetrievePasswordCompose
@@ -32,12 +33,11 @@ fun LibraryNavGraph(
         composable(
             "${Routes.HOME}/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType })
-        ){
-            backStackEntry ->
+        ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
             HomeCompose(
                 navController = navController,
-                id = id  // 传递非空参数
+                id = id
             )
         }
         composable(Routes.REGISTER) {
@@ -56,7 +56,22 @@ fun LibraryNavGraph(
             val id = backStackEntry.arguments?.getString("id") ?: ""
             SetNewPasswordCompose(
                 navController = navController,
-                id = id  // 传递非空参数
+                id = id
+            )
+        }
+        composable(
+            "${Routes.BOOK_DETAIL}/{id}/{uid}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.StringType },
+                navArgument("uid") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            val uid = backStackEntry.arguments?.getString("uid") ?: ""
+            BookDetailCompose(
+                navController = navController,
+                id = id,
+                uid = uid
             )
         }
     }

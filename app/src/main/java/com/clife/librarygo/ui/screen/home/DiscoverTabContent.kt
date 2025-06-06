@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,19 +45,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.clife.librarygo.entity.Book
+import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
 import com.clife.librarygo.viewmodel.home.DiscoverTabContentViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DiscoverTabContent(
+    navController: NavController,
     paddingValues: PaddingValues,
     id: String,
-    onBookClick: (Book) -> Unit = {},
     viewModel: DiscoverTabContentViewModel = viewModel(),
 ) {
     var searchQuery by remember { mutableStateOf("") }
@@ -64,6 +68,12 @@ fun DiscoverTabContent(
     val count by viewModel.count.collectAsState()
     val books by viewModel.books.collectAsState()
     val discoverTabContentError by viewModel.discoverTabContentError.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.navigateTo.collectLatest { route ->
+            navController.navigate(route)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -132,7 +142,14 @@ fun DiscoverTabContent(
                 items(books) { book ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = {},
+                        onClick = {
+                            navController.navigate(
+                                Routes.bookDetailWithIdAndUid(
+                                    id,
+                                    book.uid.toString()
+                                )
+                            )
+                        },
                         shape = MaterialTheme.shapes.medium
                     ) {
                         Column(
@@ -148,14 +165,6 @@ fun DiscoverTabContent(
                                     model = ImageRequest.Builder(LocalContext.current)
                                         .data(book.coverUrl)
                                         .crossfade(true)
-                                        .listener(
-                                            onError = { _, throwable ->
-                                                Log.e(
-                                                    "Coil",
-                                                    "加载失败: ${throwable.throwable.message}"
-                                                )
-                                            }
-                                        )
                                         .build(),
                                     contentDescription = book.title,
                                     modifier = Modifier.fillMaxSize(),
