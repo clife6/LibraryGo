@@ -17,6 +17,12 @@ object RetrofitClient {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor { chain ->
+                val response = chain.proceed(chain.request())
+                // 强制读取所有数据（即使不需要）
+                response.peekBody(Long.MAX_VALUE) // 关键点：避免连接提前关闭
+                response
+            }
             .build()
     }
 
