@@ -1,7 +1,6 @@
 package com.clife.librarygo.data.retrofit
 
 import com.clife.librarygo.data.response.BookResponse
-import com.clife.librarygo.data.response.BorrowResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
