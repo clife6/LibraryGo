@@ -54,6 +54,7 @@ fun BookDetailCompose(
     viewModel: BookDetailViewModel = viewModel(),
 ) {
     val bookDetail by viewModel.bookDetail.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     val bookDetailError by viewModel.bookDetailError.collectAsState()
 
     class DescriptionState {
@@ -65,6 +66,7 @@ fun BookDetailCompose(
     var isBorrowed by remember { mutableStateOf(false) }
     var descriptionState = remember { DescriptionState() }
     var backEnabled by remember { mutableStateOf(true) }
+
     LaunchedEffect(uid) {
         viewModel.setBookDetail(uid)
     }
@@ -91,7 +93,8 @@ fun BookDetailCompose(
                 },
                 actions = {
                     IconButton(
-                        onClick = { isFavorite = !isFavorite }
+                        onClick = { isFavorite = !isFavorite },
+                        enabled = !isLoading && bookDetail != null
                     ) {
                         Icon(
                             Icons.Default.Star,
@@ -100,7 +103,10 @@ fun BookDetailCompose(
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Button(onClick = { isBorrowed = !isBorrowed }) {
+                    Button(
+                        onClick = { isBorrowed = !isBorrowed },
+                        enabled = !isLoading && bookDetail != null
+                    ) {
                         Text(if (isBorrowed) "去还书" else "去借阅")
                     }
                 }

@@ -12,6 +12,9 @@ class BookDetailViewModel : ViewModel() {
     private val _bookDetail = MutableStateFlow<Book.BookDetail?>(null)
     val bookDetail = _bookDetail.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     private val _bookDetailError = MutableStateFlow<String?>(null)
     val bookDetailError = _bookDetailError.asStateFlow()
 
@@ -19,10 +22,12 @@ class BookDetailViewModel : ViewModel() {
         viewModelScope.launch {
             _bookDetailError.value = null
             _bookDetail.value = null
+            _isLoading.value = true
             try {
                 val response = RetrofitClient.bookService.searchBookDetailByUid(uid)
                 if (!response.isSuccessful && response.body() != null) {
                     _bookDetailError.value = "网络请求失败，请稍后再试"
+                    _isLoading.value = false
                     return@launch
                 }
                 when (response.body()?.code) {
@@ -33,6 +38,8 @@ class BookDetailViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _bookDetailError.value = "错误信息: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
