@@ -149,20 +149,18 @@ fun BookDetailCompose(
             ) {
                 DescriptionItem(
                     title = "内容简介",
-                    content = "【内容简介】\n最贪吃的大汉使者唐蒙，\n来到了最会吃的南越之国。\n这里食材丰富，简直就是饕餮之徒的梦想之地。然而，在美食背后，却涌动着南北对峙、族群隔阂、权位争斗、国策兴废……种种波谲云诡，竟比岭南食材的风味更加复杂。\n这个懒散的大汉使者，身陷岭南的政争漩涡。他唯 一能信赖的伙伴，只有食物；唯一的破局之法，只有追求极致美食的心。\n谁都没想到，那一缕微妙滋味，竟关乎大汉与南越国运，乃至于整个中华版图……\n【编辑推荐】\n《食南之徒》是马伯庸2024年全新长篇历史小说。贪吃的汉使唐蒙来到饕餮圣地南越，没想到卷入南越宫廷的政争之中，南北对峙、族群隔阂、权位争斗、国策兴废……时局波谲云密，他能信赖的只有美食，能够破局的也只有那颗追求极致美食的心。更没人想到，唐蒙敏感的味觉竟然拓展了大汉对中华版图的认知……\n美食不会骗人，每个人在它面前，都会露出本性。\n1.马伯庸2024年全新长篇历史小说。\n2.西汉“吃货”唐蒙出使南越，从“躺平”到“趟平”的故事。\n3.一味不知原料的酱料，一枚原生北土的枣核，勾连出中华版图变迁的一段隐秘传奇，西南丝绸之路开拓史竟也由此展开。\n4.知名画家施晓颉绘制封面，随书附赠五折六联全彩明信片插图。",
+                    content = (if (bookDetail?.contentSummary.isNullOrEmpty()) "暂无信息" else bookDetail?.contentSummary).toString(),
                     expanded = descriptionState.contentExpanded,
                     onExpandClick = { descriptionState.contentExpanded = !descriptionState.contentExpanded },
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 DescriptionItem(
                     title = "作者简介",
-                    content = "余华，1960年出生，1983年开始写作。至今已经出版长篇小说4部，中短篇小说集6部，随笔集4部。主要作品有《兄弟》《活着》《许三观卖血记》《在细雨中呼喊》等。其作品已被翻译成20多种语言在美国、英国、法国、德国、意大利、西班牙、荷兰、瑞典、挪威、希腊、俄罗斯、保加利亚、匈牙利、捷克、塞尔维亚、斯洛伐克、波兰、巴西、以色列、日本、韩国、越南、泰国和印度等国出版。曾获意大利格林扎纳·卡佛文学奖（1998年）、法国文学和艺术骑士勋章（2004年）、中华图书特殊贡献奖（2005年）、法国国际信使外国小说奖（2008年）等。",
+                    content = (if (bookDetail?.authorSummary.isNullOrEmpty()) "暂无信息" else bookDetail?.authorSummary).toString(),
                     expanded = descriptionState.authorExpanded,
                     onExpandClick = { descriptionState.authorExpanded = !descriptionState.authorExpanded }
                 )
             }
-            (if (bookDetail?.contentSummary.isNullOrEmpty()) "未找到相关信息" else bookDetail?.contentSummary).toString()
-            (if (bookDetail?.authorSummary.isNullOrEmpty()) "未找到相关信息" else bookDetail?.authorSummary).toString()
             val bookInfo = listOf(
                 "出版社" to bookDetail?.publisher,
                 "定价" to bookDetail?.price,
