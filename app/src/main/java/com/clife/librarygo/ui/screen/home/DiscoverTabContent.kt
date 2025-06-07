@@ -1,6 +1,5 @@
 package com.clife.librarygo.ui.screen.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +49,6 @@ import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.clife.librarygo.entity.Book
 import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
 import com.clife.librarygo.viewmodel.home.DiscoverTabContentViewModel
@@ -160,7 +158,6 @@ fun DiscoverTabContent(
                                     .fillMaxWidth()
                                     .aspectRatio(2f / 3f)
                             ) {
-
                                 AsyncImage(
                                     model = ImageRequest.Builder(LocalContext.current)
                                         .data(book.coverUrl)
