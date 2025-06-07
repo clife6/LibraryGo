@@ -21,12 +21,12 @@ class BookDetailViewModel : ViewModel() {
             _bookDetail.value = null
             try {
                 val response = RetrofitClient.bookService.searchBookDetailByUid(uid)
-                if (response.isSuccessful && response.body() != null) {
+                if (!response.isSuccessful && response.body() != null) {
                     _bookDetailError.value = "网络请求失败，请稍后再试"
                     return@launch
                 }
                 when (response.body()?.code) {
-                    1 -> _bookDetail.value = response.body()?.bookDetail
+                    1 -> _bookDetail.value = response.body()?.book
                     0 -> _bookDetailError.value = "未找到相关书籍信息"
                     -1 -> _bookDetailError.value = "书籍uid不能为空"
                     else -> _bookDetailError.value = "查询失败，请稍后再试"

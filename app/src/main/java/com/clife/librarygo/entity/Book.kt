@@ -42,5 +42,7 @@ sealed class Book {
         val binding: String, //装帧
         val series: String, //丛书
         val isbn: String, //ISBN
+        val contentSummary: String, //内容简介
+        val authorSummary: String, //作者简介
     )
 }
