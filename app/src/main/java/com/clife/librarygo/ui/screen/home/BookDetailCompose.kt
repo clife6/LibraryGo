@@ -11,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -54,12 +55,16 @@ fun BookDetailCompose(
 ) {
     val bookDetail by viewModel.bookDetail.collectAsState()
     val bookDetailError by viewModel.bookDetailError.collectAsState()
+
     class DescriptionState {
         var contentExpanded by mutableStateOf(false)
         var authorExpanded by mutableStateOf(false)
     }
-    var descriptionState = remember { DescriptionState() }
 
+    var isFavorite by remember { mutableStateOf(false) }
+    var isBorrowed by remember { mutableStateOf(false) }
+    var descriptionState = remember { DescriptionState() }
+    var backEnabled by remember { mutableStateOf(true) }
     LaunchedEffect(uid) {
         viewModel.setBookDetail(uid)
     }
@@ -69,7 +74,15 @@ fun BookDetailCompose(
             TopAppBar(
                 title = { },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(
+                        onClick = {
+                            if (backEnabled) {
+                                backEnabled = false
+                                navController.popBackStack()
+                            }
+                        },
+                        enabled = backEnabled
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "返回"
@@ -77,12 +90,18 @@ fun BookDetailCompose(
                     }
                 },
                 actions = {
-                    TextButton(onClick = {}) {
-                        Text("加入书架")
+                    IconButton(
+                        onClick = { isFavorite = !isFavorite }
+                    ) {
+                        Icon(
+                            Icons.Default.Star,
+                            contentDescription = "收藏",
+                            tint = if (isFavorite) Color(0xFFFFD700) else Color.Gray
+                        )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Button(onClick = {}) {
-                        Text("去借阅")
+                    Button(onClick = { isBorrowed = !isBorrowed }) {
+                        Text(if (isBorrowed) "去还书" else "去借阅")
                     }
                 }
             )
@@ -151,14 +170,18 @@ fun BookDetailCompose(
                     title = "内容简介",
                     content = (if (bookDetail?.contentSummary.isNullOrEmpty()) "暂无信息" else bookDetail?.contentSummary).toString(),
                     expanded = descriptionState.contentExpanded,
-                    onExpandClick = { descriptionState.contentExpanded = !descriptionState.contentExpanded },
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    onExpandClick = {
+                        descriptionState.contentExpanded = !descriptionState.contentExpanded
+                    },
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
                 DescriptionItem(
                     title = "作者简介",
                     content = (if (bookDetail?.authorSummary.isNullOrEmpty()) "暂无信息" else bookDetail?.authorSummary).toString(),
                     expanded = descriptionState.authorExpanded,
-                    onExpandClick = { descriptionState.authorExpanded = !descriptionState.authorExpanded }
+                    onExpandClick = {
+                        descriptionState.authorExpanded = !descriptionState.authorExpanded
+                    }
                 )
             }
             val bookInfo = listOf(
@@ -166,40 +189,60 @@ fun BookDetailCompose(
                 "定价" to bookDetail?.price,
                 "页数" to (bookDetail?.pages?.toString() ?: ""),
                 "出版年" to bookDetail?.publicationYear,
-                "丛书" to bookDetail?.series,
                 "装帧" to bookDetail?.binding,
                 "出品方" to bookDetail?.productionCompany,
+                "丛书" to bookDetail?.series,
                 "ISBN" to bookDetail?.isbn
             )
-            Column(
-                modifier = Modifier.fillMaxWidth()
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 2.dp
+                ),
+                border = BorderStroke(1.dp, Color.LightGray.copy(alpha = 0.5f))
             ) {
-                bookInfo.forEach { (label, value) ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = label,
-                            fontSize = 16.sp,
-                            color = Color.Gray,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = if (value.isNullOrEmpty()) "暂无信息" else value,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.End,
-                            modifier = Modifier.weight(1f)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "书籍信息",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    bookInfo.forEach { (label, value) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = label,
+                                fontSize = 15.sp,
+                                color = Color.Gray,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Text(
+                                text = if (value.isNullOrEmpty()) "暂无信息" else value,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            thickness = 0.5.dp,
+                            color = Color.LightGray
                         )
                     }
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        thickness = 0.5.dp,
-                        color = Color.LightGray
-                    )
                 }
             }
         }
@@ -226,7 +269,8 @@ fun DescriptionItem(
         BoxWithConstraints(
             modifier = Modifier.padding(16.dp)
         ) {
-            val widthPx = with(LocalDensity.current) { this@BoxWithConstraints.maxWidth.toPx().toInt() }
+            val widthPx =
+                with(LocalDensity.current) { this@BoxWithConstraints.maxWidth.toPx().toInt() }
             Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
