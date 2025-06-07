@@ -76,7 +76,7 @@ fun HomeCompose(
             0 -> HomeTabContent(contentPadding, id)
             1 -> DiscoverTabContent(navController, contentPadding, id)
             2 -> BookshelfTabContent(navController,contentPadding, id)
-            3 -> ProfileTabContent(contentPadding, id)
+            3 -> ProfileTabContent(navController,contentPadding, id)
         }
     }
 }

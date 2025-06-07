@@ -1,11 +1,36 @@
 package com.clife.librarygo.ui.screen.home
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.clife.librarygo.R
+import com.clife.librarygo.ui.theme.LibraryGoTheme
 
 @Composable
 fun ProfileTabHeader(
@@ -19,12 +44,106 @@ fun ProfileTabHeader(
 
 @Composable
 fun ProfileTabContent(
+    navController: NavController,
     paddingValues: PaddingValues,
     id: String,
 ) {
-    Text(
-        text = "个人中心内容",
-        modifier = Modifier.padding(paddingValues),
-        style = MaterialTheme.typography.bodyLarge
-    )
+    val userName = "一号大兵"
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxWidth()
+            .background(Color(0xFFD3D2D2))
+    ){
+        Row(
+            modifier = Modifier
+                .background(Color(0xFFFFFFFF))
+                .fillMaxWidth()
+                .padding(20.dp)
+                .height(80.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.tx), // 替换为实际头像资源
+                contentDescription = "头像",
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable{
+                        /*跳转用户详情界面*/
+                    }
+            )
+            Spacer(modifier = Modifier.width(18.dp))
+            Column{
+                Text(
+                    text = userName,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = "ID: 1",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = "查看详情",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.clickable{
+                    /*跳转用户详情界面*/
+                }
+            )
+        }
+        Spacer(
+            modifier = Modifier
+                .height(10.dp) // 需要指定高度，否则 Spacer 没有可见区域
+        )
+        Row(
+            modifier = Modifier
+                .background(Color(0xFFFFFFFF))
+                .fillMaxWidth()
+                .padding(15.dp)
+                .height(25.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Icon(
+                Icons.Default.Star,
+                contentDescription = "收藏",
+                tint = Color(0xFFFFD700)
+            )
+            Spacer(modifier = Modifier.width(18.dp))
+            Text(
+                text = "收藏",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = "查看收藏",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.clickable{
+                    /*跳转用户详情界面*/
+                }
+            )
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+
+@Composable
+fun PreviewProfileTabContent() {
+    LibraryGoTheme {
+        ProfileTabContent(
+            navController = rememberNavController(),
+            paddingValues = PaddingValues(0.dp),
+            "1"
+        )
+    }
 }
