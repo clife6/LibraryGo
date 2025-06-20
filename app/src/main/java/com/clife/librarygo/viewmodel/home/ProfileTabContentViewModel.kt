@@ -28,7 +28,7 @@ class ProfileTabContentViewModel : ViewModel() {
             if (userInfoResponse.isSuccessful){
                 userInfoResponse.body()?.let {
                     if (it.code == 1) {
-                        _userInfo.value = it.userInfo
+                        _userInfo.value = it.user
                     } else if(it.code == 0) {
                         _errorMessage.value = "用户不存在"
                     }else{

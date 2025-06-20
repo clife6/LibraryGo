@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import java.util.Base64
 
 class ChangeAvatarViewModel : ViewModel(){
     val imageUris = mutableStateListOf<Uri>()
@@ -39,5 +40,10 @@ class ChangeAvatarViewModel : ViewModel(){
     }
     fun selectAvatar(uri: Uri) {
         selectedAvatarUri = uri
+    }
+
+    //头像图片转换为Base64字符串
+    fun encodeToBase64(data: ByteArray): String {
+        return Base64.getEncoder().encodeToString(data)
     }
 }

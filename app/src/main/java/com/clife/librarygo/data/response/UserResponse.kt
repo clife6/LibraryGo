@@ -52,6 +52,6 @@ sealed class UserResponse {
         val code: Int,
         val message: String? = null,
         val error: String? = null,
-        val userInfo: User.UserInfo? = null,
+        val user: User.UserInfo? = null,
     )
 }
