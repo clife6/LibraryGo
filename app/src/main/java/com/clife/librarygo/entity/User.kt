@@ -1,12 +1,11 @@
 package com.clife.librarygo.entity
 
-data class User(
-    val id: Long,
-    val username: String,
-    val password: String,
-    val email: String,
-    val phone: String,
-    val role: String,
-    val createdAt: Long,
-    val avatar: String,
-)
+sealed class User {
+    data class UserInfo(
+        val id: Long,
+        val username: String,
+        val email: String,
+        val phone: String,
+        val avatar: String,
+    )
+}

@@ -1,6 +1,6 @@
 package com.clife.librarygo.ui.screen.home
 
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -14,23 +14,30 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.clife.librarygo.R
+import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
+import com.clife.librarygo.viewmodel.home.ProfileTabContentViewModel
 
 @Composable
 fun ProfileTabHeader(
@@ -47,8 +54,16 @@ fun ProfileTabContent(
     navController: NavController,
     paddingValues: PaddingValues,
     id: String,
+    viewModel : ProfileTabContentViewModel = viewModel()
 ) {
-    val userName = "一号大兵"
+    val userInfo by viewModel.userInfo.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+
+
+    LaunchedEffect(id) {
+        viewModel.getUserInfo(id)
+    }
+
     Column(
         modifier = Modifier
             .padding(paddingValues)
@@ -64,24 +79,28 @@ fun ProfileTabContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Image(
-                painter = painterResource(id = R.drawable.tx), // 替换为实际头像资源
+            AsyncImage(
+                //如果userInfo.avatar为空则使用默认头像
+                model = userInfo?.avatar ?: R.drawable.default_avatar,
                 contentDescription = "头像",
                 modifier = Modifier
                     .size(64.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .clickable{
-                        /*跳转用户详情界面*/
+                        // 跳转到更改头像界面
+                        navController.navigate(Routes.CHANGE_AVATAR)
                     }
             )
             Spacer(modifier = Modifier.width(18.dp))
             Column{
+                userInfo?.let {
+                    Text(
+                        text = it.username,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
                 Text(
-                    text = userName,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = "ID: 1",
+                    text = "ID:${id}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -92,7 +111,8 @@ fun ProfileTabContent(
                 contentDescription = "查看详情",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.clickable{
-                    /*跳转用户详情界面*/
+                    // 跳转到更改头像界面
+                    navController.navigate(Routes.CHANGE_AVATAR)
                 }
             )
         }
@@ -110,12 +130,12 @@ fun ProfileTabContent(
         ){
             Icon(
                 Icons.Default.Star,
-                contentDescription = "收藏",
+                contentDescription = "我的收藏",
                 tint = Color(0xFFFFD700)
             )
             Spacer(modifier = Modifier.width(18.dp))
             Text(
-                text = "收藏",
+                text = "我的收藏",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -125,9 +145,45 @@ fun ProfileTabContent(
                 contentDescription = "查看收藏",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.clickable{
-                    /*跳转用户详情界面*/
+                    /*跳转我的收藏界面*/
                 }
             )
+
+        }
+
+        Spacer(
+            modifier = Modifier
+                .height(10.dp)
+        )
+        Row(
+            modifier = Modifier
+                .background(Color(0xFFFFFFFF))
+                .fillMaxWidth()
+                .padding(15.dp)
+                .height(25.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Icon(
+                Icons.Default.Book,
+                contentDescription = "我的借阅",
+                tint = Color(0xFFFFD700)
+            )
+            Spacer(modifier = Modifier.width(18.dp))
+            Text(
+                text = "我的借阅",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = "跳转书架",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.clickable{
+                    //跳转书架界面
+                }
+            )
+
         }
     }
 }

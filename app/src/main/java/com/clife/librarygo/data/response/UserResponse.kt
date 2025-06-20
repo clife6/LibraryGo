@@ -1,5 +1,7 @@
 package com.clife.librarygo.data.response
 
+import com.clife.librarygo.entity.User
+
 sealed class UserResponse {
 
     data class SearchUserResponse(
@@ -43,5 +45,13 @@ sealed class UserResponse {
         val message: String? = null,
         val error: String? = null,
         val id: Long? = null,
+    )
+
+    //获取用户信息的响应
+    data class GetUserInfoResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+        val userInfo: User.UserInfo? = null,
     )
 }

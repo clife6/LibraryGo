@@ -46,4 +46,10 @@ interface UserService {
     suspend fun loginUser(
         @Body request: UserRequest.LoginUserRequest
     ): Response<UserResponse.LoginUserResponse>
+
+    //获取用户信息
+    @GET("/user/getUserInfo")
+    suspend fun getUserInfo(
+        @Query("user_id") userId: String
+    ): Response<UserResponse.GetUserInfoResponse>
 }

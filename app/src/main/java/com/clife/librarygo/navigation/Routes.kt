@@ -13,4 +13,5 @@ object Routes {
     fun setNewPasswordWithId(id: String) = "$SET_NEW_PASSWORD/$id"
     const val BOOK_DETAIL = "book_detail"
     fun bookDetailWithIdAndUid(id: String, uid: String) = "$BOOK_DETAIL/$id/$uid"
+    const val CHANGE_AVATAR = "change_avatar"
 }
