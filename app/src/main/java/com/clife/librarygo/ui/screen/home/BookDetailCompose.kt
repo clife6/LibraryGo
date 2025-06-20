@@ -3,7 +3,18 @@ package com.clife.librarygo.ui.screen.home
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -12,8 +23,19 @@ import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -115,11 +137,11 @@ fun BookDetailCompose(
                     Button(
                         onClick = {
                             if (isBorrow) {
-                        } else {
-                            viewModel.getBorrowDateAndReturnDate()
-                            showConfirmBorrowDialog = true
-                        }
-                                  },
+                            } else {
+                                viewModel.getBorrowDateAndReturnDate()
+                                showConfirmBorrowDialog = true
+                            }
+                        },
                         enabled = !isLoading && bookDetail != null
                     ) {
                         Text(if (isBorrow) "去还书" else "去借阅")
@@ -280,7 +302,11 @@ fun BookDetailCompose(
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text("应还日期:", modifier = Modifier.width(80.dp))
-                            Text(returnDate, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.primary)
+                            Text(
+                                returnDate,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 },
@@ -388,7 +414,6 @@ fun String.lineCount(
     showBackground = true,
     showSystemUi = true
 )
-
 @Composable
 fun PreviewBookDetailCompose() {
     LibraryGoTheme {
