@@ -10,6 +10,8 @@ import com.clife.librarygo.ui.screen.login.AdminLoginCompose
 import com.clife.librarygo.ui.screen.login.LoginCompose
 import com.clife.librarygo.ui.screen.WelcomeCompose
 import com.clife.librarygo.ui.screen.home.BookDetailCompose
+import com.clife.librarygo.ui.screen.home.BookshelfTabContent
+import com.clife.librarygo.ui.screen.home.ChangeAvatarCompose
 import com.clife.librarygo.ui.screen.home.HomeCompose
 import com.clife.librarygo.ui.screen.login.RegisterCompose
 import com.clife.librarygo.ui.screen.login.RetrievePasswordCompose
@@ -73,6 +75,9 @@ fun LibraryNavGraph(
                 id = id,
                 uid = uid
             )
+        }
+        composable(Routes.CHANGE_AVATAR) {
+            ChangeAvatarCompose(navController = navController)
         }
     }
 }
