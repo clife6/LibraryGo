@@ -55,6 +55,7 @@ fun BookDetailCompose(
     viewModel: BookDetailViewModel = viewModel(),
 ) {
     val bookDetail by viewModel.bookDetail.collectAsState()
+    val isCollection by viewModel.isCollection.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val bookDetailError by viewModel.bookDetailError.collectAsState()
 
@@ -63,13 +64,13 @@ fun BookDetailCompose(
         var authorExpanded by mutableStateOf(false)
     }
 
-    var isFavorite by remember { mutableStateOf(false) }
     var isBorrowed by remember { mutableStateOf(false) }
     var descriptionState = remember { DescriptionState() }
     var backEnabled by remember { mutableStateOf(true) }
 
     LaunchedEffect(uid) {
         viewModel.setBookDetail(uid)
+        viewModel.setIsCollection(id, uid)
     }
 
     Scaffold(
@@ -94,16 +95,16 @@ fun BookDetailCompose(
                 },
                 actions = {
                     IconButton(
-                        onClick = { isFavorite = !isFavorite },
+                        onClick = { viewModel.updateCollection(id, uid, !isCollection) },
                         enabled = !isLoading && bookDetail != null
                     ) {
                         Icon(
                             Icons.Default.Star,
                             contentDescription = "收藏",
-                            tint = if (isFavorite) Color(0xFFFFD700) else Color.Gray,
+                            tint = if (isCollection) Color(0xFFFFD700) else Color.Gray,
                             modifier = Modifier
                                 .animateContentSize()
-                                .scale(if (isFavorite) 1.2f else 1f)
+                                .scale(if (isCollection) 1.2f else 1f)
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))

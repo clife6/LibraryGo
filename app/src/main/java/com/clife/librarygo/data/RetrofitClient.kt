@@ -2,6 +2,7 @@ package com.clife.librarygo.data
 
 import com.clife.librarygo.data.retrofit.BookService
 import com.clife.librarygo.data.retrofit.BorrowService
+import com.clife.librarygo.data.retrofit.CollectionService
 import com.clife.librarygo.data.retrofit.UserService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -47,5 +48,10 @@ object RetrofitClient {
     // BorrowService实例
     val borrowService: BorrowService by lazy {
         retrofit.create(BorrowService::class.java)
+    }
+
+    // CollectionService实例
+    val collectionService: CollectionService by lazy {
+        retrofit.create(CollectionService::class.java)
     }
 }
