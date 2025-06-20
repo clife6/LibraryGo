@@ -56,6 +56,9 @@ fun BookDetailCompose(
 ) {
     val bookDetail by viewModel.bookDetail.collectAsState()
     val isCollection by viewModel.isCollection.collectAsState()
+    val isBorrow by viewModel.isBorrow.collectAsState()
+    val borrowDate by viewModel.borrowDate.collectAsState()
+    val returnDate by viewModel.returnDate.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val bookDetailError by viewModel.bookDetailError.collectAsState()
 
@@ -64,13 +67,14 @@ fun BookDetailCompose(
         var authorExpanded by mutableStateOf(false)
     }
 
-    var isBorrowed by remember { mutableStateOf(false) }
+    var showConfirmBorrowDialog by remember { mutableStateOf(false) }
     var descriptionState = remember { DescriptionState() }
     var backEnabled by remember { mutableStateOf(true) }
 
     LaunchedEffect(uid) {
         viewModel.setBookDetail(uid)
         viewModel.setIsCollection(id, uid)
+        viewModel.setIsBorrow(id, uid)
     }
 
     Scaffold(
@@ -109,10 +113,16 @@ fun BookDetailCompose(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
-                        onClick = { isBorrowed = !isBorrowed },
+                        onClick = {
+                            if (isBorrow) {
+                        } else {
+                            viewModel.getBorrowDateAndReturnDate()
+                            showConfirmBorrowDialog = true
+                        }
+                                  },
                         enabled = !isLoading && bookDetail != null
                     ) {
-                        Text(if (isBorrowed) "去还书" else "去借阅")
+                        Text(if (isBorrow) "去还书" else "去借阅")
                     }
                 }
             )
@@ -248,6 +258,50 @@ fun BookDetailCompose(
                     }
                 }
             }
+        }
+
+        if (showConfirmBorrowDialog) {
+            AlertDialog(
+                onDismissRequest = { showConfirmBorrowDialog = false },
+                title = { Text("确认借阅", fontWeight = FontWeight.Bold) },
+                text = {
+                    Column {
+                        Text("确认借阅以下书籍吗？", modifier = Modifier.padding(bottom = 8.dp))
+                        Text("《${bookDetail?.title ?: "未知书名"}》", fontWeight = FontWeight.Medium)
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("借阅日期:", modifier = Modifier.width(80.dp))
+                            Text(borrowDate, fontWeight = FontWeight.Medium)
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("应还日期:", modifier = Modifier.width(80.dp))
+                            Text(returnDate, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.confirmBorrow(id, uid)
+                            showConfirmBorrowDialog = false
+                        }
+                    ) {
+                        Text("确认借阅")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showConfirmBorrowDialog = false }
+                    ) {
+                        Text("取消")
+                    }
+                }
+            )
         }
     }
 }

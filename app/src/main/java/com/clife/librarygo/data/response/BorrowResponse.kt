@@ -10,4 +10,18 @@ sealed class BorrowResponse{
         val error: String? = null,
         val books: List<Book.BookBorrowed>? = null
     )
+
+    //查询借阅的图书信息通过用户ID和书籍UID
+    data class SearchBorrowByUserIdAndBookUidResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+    )
+
+    //借阅图书
+    data class BorrowBookResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+    )
 }
