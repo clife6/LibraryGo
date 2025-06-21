@@ -54,4 +54,11 @@ sealed class UserResponse {
         val error: String? = null,
         val user: User.UserInfo? = null,
     )
+
+    //设置新的头像的响应
+    data class SetNewAvatarResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+    )
 }

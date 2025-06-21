@@ -52,4 +52,10 @@ interface UserService {
     suspend fun getUserInfo(
         @Query("user_id") userId: String
     ): Response<UserResponse.GetUserInfoResponse>
+
+    //设置新的头像
+    @POST("/user/setNewAvatar")
+    suspend fun setNewAvatar(
+        @Body request: UserRequest.SetNewAvatarRequest
+    ): Response<UserResponse.SetNewAvatarResponse>
 }

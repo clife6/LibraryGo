@@ -24,4 +24,9 @@ sealed class UserRequest {
         val username: String,
         val password: String
     )
+
+    data class SetNewAvatarRequest(
+        val userId: String,
+        val avatar: String
+    )
 }
