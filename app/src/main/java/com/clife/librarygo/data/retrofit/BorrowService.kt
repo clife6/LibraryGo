@@ -27,4 +27,10 @@ interface BorrowService {
     suspend fun borrowBook(
         @Body request: BorrowRequest.BorrowBookRequest
     ): Response<BorrowResponse.BorrowBookResponse>
+
+    // 归还图书
+    @POST("/borrow/deleteBorrowRecord")
+    suspend fun deleteBorrowRecord(
+        @Body request: BorrowRequest.DeleteBorrowRecordRequest
+    ): Response<BorrowResponse.DeleteBorrowRecordResponse>
 }

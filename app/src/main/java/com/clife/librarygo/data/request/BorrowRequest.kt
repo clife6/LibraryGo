@@ -6,4 +6,9 @@ sealed class BorrowRequest{
         val userId: String,
         val bookUid: String,
     )
+
+    data class DeleteBorrowRecordRequest(
+        val userId: String,
+        val bookUid: String,
+    )
 }
