@@ -69,23 +69,18 @@ fun BookshelfTabContent(
 
     // 用于防止频繁刷新
     val lastRefreshTime = remember { mutableLongStateOf(0L) }
-    val showDebounceDialog = remember { mutableStateOf(false) }
 
     val onRefresh: () -> Unit = {
         val now = System.currentTimeMillis()
-        if (now - lastRefreshTime.longValue < 500) { //0.5秒防抖
-            showDebounceDialog.value = true
-        }else{
-            lastRefreshTime.longValue = now
-            isRefreshing.value = true
-            viewModel.pullToRefresh(id)
-            isRefreshing.value = false
-        }
+        lastRefreshTime.longValue = now
+        isRefreshing.value = true
+        viewModel.refresh(id)
+        isRefreshing.value = false
     }
 
     // 监听图书信息变化
     LaunchedEffect(id) {
-        viewModel.refreshBookshelf(id)
+        viewModel.refresh(id)
     }
 
     // 监听导航事件
@@ -113,27 +108,13 @@ fun BookshelfTabContent(
         )
     }
 
-    // 防抖弹窗
-    if (showDebounceDialog.value) {
-        AlertDialog(
-            onDismissRequest = { showDebounceDialog.value = false },
-            title = { Text("提示") },
-            text = { Text("请不要频繁刷新\n刷新间隔为0.5s") },
-            confirmButton = {
-                Button(onClick = { showDebounceDialog.value = false }) {
-                    Text("确定")
-                }
-            }
-        )
-    }
-
-    Box(modifier = Modifier.fillMaxWidth()){
+    Box(modifier = Modifier.fillMaxWidth()) {
         PullToRefreshBox(
             isRefreshing = isRefreshing.value,
             onRefresh = onRefresh,
             modifier = Modifier.padding(),
             state = state,
-            indicator =  {
+            indicator = {
                 Indicator(
                     modifier = Modifier.align(Alignment.TopCenter),
                     isRefreshing = isRefreshing.value,
@@ -142,13 +123,13 @@ fun BookshelfTabContent(
                     state = state
                 )
             },
-        ){
+        ) {
             LazyColumn(
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxWidth()
             ) {
-                if (books.isEmpty()){
+                if (books.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
@@ -163,7 +144,7 @@ fun BookshelfTabContent(
                             )
                         }
                     }
-                }else{
+                } else {
                     for (book in books) {
                         item(key = book.uid) {
                             //展示book内容
@@ -181,7 +162,7 @@ fun BookshelfTabContent(
                                     )
                                 }
                             ) {
-                                Row{
+                                Row {
                                     AsyncImage(
                                         model = book.work_image_url,
                                         contentDescription = "Book Cover",
