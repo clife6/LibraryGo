@@ -272,6 +272,8 @@ class BookDetailViewModel : ViewModel() {
     //获取当前的时间设置借阅时间和还书日期
     fun getBorrowDateAndReturnDate() {
         _bookDetailError.value = null
+        _borrowDate.value = ""
+        _returnDate.value = ""
         _isLoading.value = true
         try {
             val currentDateTime = LocalDateTime.now()
@@ -328,6 +330,7 @@ class BookDetailViewModel : ViewModel() {
     //获取当前的时间设置实际归还时间
     fun getActualReturnDate() {
         _bookDetailError.value = null
+        _actualReturnDate.value = ""
         _isLoading.value = true
         try {
             val currentDateTime = LocalDateTime.now()

@@ -17,28 +17,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.clife.librarygo.R
 import com.clife.librarygo.navigation.Routes
-import com.clife.librarygo.ui.theme.LibraryGoTheme
+import com.clife.librarygo.viewmodel.home.HomeViewModel
 import com.clife.librarygo.viewmodel.home.ProfileTabContentViewModel
 
 @Composable
@@ -56,7 +52,8 @@ fun ProfileTabContent(
     navController: NavController,
     paddingValues: PaddingValues,
     id: String,
-    viewModel : ProfileTabContentViewModel = viewModel()
+    viewModel : ProfileTabContentViewModel = viewModel(),
+    home : HomeViewModel
 ) {
     val userInfo by viewModel.userInfo.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
@@ -182,7 +179,8 @@ fun ProfileTabContent(
                 contentDescription = "跳转书架",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.clickable{
-                    //跳转书架界面
+                    // 跳转到书架界面
+                    home.selectTab(2)
                 }
             )
 
@@ -190,18 +188,19 @@ fun ProfileTabContent(
     }
 }
 
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-
-@Composable
-fun PreviewProfileTabContent() {
-    LibraryGoTheme {
-        ProfileTabContent(
-            navController = rememberNavController(),
-            paddingValues = PaddingValues(0.dp),
-            "1"
-        )
-    }
-}
+//@Preview(
+//    showBackground = true,
+//    showSystemUi = true
+//)
+//
+//@Composable
+//fun PreviewProfileTabContent() {
+//    LibraryGoTheme {
+//        ProfileTabContent(
+//            navController = rememberNavController(),
+//            paddingValues = PaddingValues(0.dp),
+//            "1",
+//
+//        )
+//    }
+//}

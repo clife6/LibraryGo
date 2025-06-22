@@ -40,4 +40,11 @@ class ProfileTabContentViewModel : ViewModel() {
             _errorMessage.value = "网络错误: ${e.message}"
         }
     }
+
+    // 更新用户头像
+    companion object {
+        fun updateAvatar(string: String) {
+
+        }
+    }
 }

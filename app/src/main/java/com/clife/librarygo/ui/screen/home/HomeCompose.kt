@@ -91,7 +91,8 @@ fun HomeCompose(
             3 -> ProfileTabContent(
                 paddingValues=contentPadding,
                 navController=navController,
-                id=id
+                id=id,
+                home = viewModel
             )
         }
     }

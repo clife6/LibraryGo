@@ -1,7 +1,6 @@
 package com.clife.librarygo.ui.screen.home
 
 import android.Manifest
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -11,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.ui.theme.LibraryGoTheme
 import com.clife.librarygo.viewmodel.home.ChangeAvatarViewModel
 import com.clife.librarygo.viewmodel.home.ProfileTabContentViewModel
@@ -74,6 +75,19 @@ fun ChangeAvatarCompose(
                     .size(120.dp),
                 contentScale = ContentScale.Crop
             )
+            // 选择头像按钮，点击后将当前头像Base64编码并传递给ProfileTabContentViewModel
+            Button(
+                onClick = {
+                    viewModel.selectedAvatarUri?.let { uri ->
+                        val base64Avatar = viewModel.encodeToBase64(context.contentResolver.openInputStream(uri)?.readBytes() ?: ByteArray(0))
+                        ProfileTabContentViewModel.updateAvatar(base64Avatar)
+                        navController.navigate(Routes.CHANGE_AVATAR)
+                    }
+                },
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                Text("选择头像")
+            }
         }
 
         when {
