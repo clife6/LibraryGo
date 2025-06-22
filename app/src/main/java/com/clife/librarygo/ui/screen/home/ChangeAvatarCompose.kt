@@ -7,37 +7,49 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.clife.librarygo.navigation.Routes
-import com.clife.librarygo.ui.theme.LibraryGoTheme
 import com.clife.librarygo.viewmodel.home.ChangeAvatarViewModel
-import com.clife.librarygo.viewmodel.home.ProfileTabContentViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ChangeAvatarCompose(
     viewModel: ChangeAvatarViewModel = viewModel(),
     onAvatarSelected: (Uri) -> Unit = {},
-    navController: NavHostController
+    navController: NavHostController,
+    id: String,
 ) {
     val context = LocalContext.current
     val imageUris = viewModel.imageUris
+    val coroutineScope = rememberCoroutineScope()
 
     val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
         Manifest.permission.READ_MEDIA_IMAGES else Manifest.permission.READ_EXTERNAL_STORAGE
@@ -75,13 +87,15 @@ fun ChangeAvatarCompose(
                     .size(120.dp),
                 contentScale = ContentScale.Crop
             )
-            // 选择头像按钮，点击后将当前头像Base64编码并传递给ProfileTabContentViewModel
+            // 选择头像按钮，点击后将当前头像Base64编码
             Button(
                 onClick = {
                     viewModel.selectedAvatarUri?.let { uri ->
                         val base64Avatar = viewModel.encodeToBase64(context.contentResolver.openInputStream(uri)?.readBytes() ?: ByteArray(0))
-                        ProfileTabContentViewModel.updateAvatar(base64Avatar)
-                        navController.navigate(Routes.CHANGE_AVATAR)
+                        coroutineScope.launch {
+                            viewModel.updateAvatar(id,base64Avatar)
+                            navController.popBackStack()
+                        }
                     }
                 },
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -130,13 +144,17 @@ fun ChangeAvatarCompose(
     }
 }
 
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Composable
-fun PreviewChangeAvatarCompose() {
-    LibraryGoTheme {
-        ChangeAvatarCompose(navController = rememberNavController())
-    }
-}
+//@Preview(
+//    showBackground = true,
+//    showSystemUi = true
+//)
+//@Composable
+//fun PreviewChangeAvatarCompose() {
+//    LibraryGoTheme {
+//        ChangeAvatarCompose(
+//            navController = rememberNavController(),
+//            id = "2"
+//
+//        )
+//    }
+//}

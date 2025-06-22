@@ -7,10 +7,19 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.clife.librarygo.data.RetrofitClient
+import com.clife.librarygo.data.request.UserRequest
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.Base64
 
 class ChangeAvatarViewModel : ViewModel(){
     val imageUris = mutableStateListOf<Uri>()
+
+    // 错误信息的 StateFlow
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage = _errorMessage.asStateFlow()
+
 
     var selectedAvatarUri by mutableStateOf<Uri?>(null)
         private set // 只能在ViewModel内部修改
@@ -38,6 +47,27 @@ class ChangeAvatarViewModel : ViewModel(){
             }
         }
     }
+
+    //更新头像
+    suspend fun updateAvatar(id: String,avatar: String) {
+        val avatarResponse = RetrofitClient.userService.setNewAvatar(
+            UserRequest.SetNewAvatarRequest(id,avatar)
+        )
+        try {
+            if (avatarResponse.isSuccessful) {
+                avatarResponse.body()?.let {
+                    if (it.code == 1) {
+                        _errorMessage.value = null
+                    } else {
+                        _errorMessage.value = it.error ?: "更新头像失败"
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            _errorMessage.value = "网络错误: ${e.message}"
+        }
+    }
+
     fun selectAvatar(uri: Uri) {
         selectedAvatarUri = uri
     }

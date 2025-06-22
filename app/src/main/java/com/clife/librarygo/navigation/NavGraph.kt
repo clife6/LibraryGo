@@ -10,7 +10,6 @@ import com.clife.librarygo.ui.screen.login.AdminLoginCompose
 import com.clife.librarygo.ui.screen.login.LoginCompose
 import com.clife.librarygo.ui.screen.WelcomeCompose
 import com.clife.librarygo.ui.screen.home.BookDetailCompose
-import com.clife.librarygo.ui.screen.home.BookshelfTabContent
 import com.clife.librarygo.ui.screen.home.ChangeAvatarCompose
 import com.clife.librarygo.ui.screen.home.HomeCompose
 import com.clife.librarygo.ui.screen.login.RegisterCompose
@@ -76,8 +75,15 @@ fun LibraryNavGraph(
                 uid = uid
             )
         }
-        composable(Routes.CHANGE_AVATAR) {
-            ChangeAvatarCompose(navController = navController)
+        composable(
+            "${Routes.CHANGE_AVATAR}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            ChangeAvatarCompose(
+                navController = navController,
+                id = id
+            )
         }
     }
 }

@@ -80,14 +80,16 @@ fun ProfileTabContent(
 
             AsyncImage(
                 //如果userInfo.avatar为空则使用默认头像
-                model = userInfo?.avatar ?: R.drawable.default_avatar,
+                model = userInfo?.avatar?.let { it + "&t=${System.currentTimeMillis()}" } ?: R.drawable.default_avatar,
                 contentDescription = "头像",
                 modifier = Modifier
                     .size(64.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .clickable{
                         // 跳转到更改头像界面
-                        navController.navigate(Routes.CHANGE_AVATAR)
+                        navController.navigate(Routes.changeAvatarWithId(
+                            id = id
+                        ))
                     }
             )
             Spacer(modifier = Modifier.width(18.dp))
@@ -111,7 +113,7 @@ fun ProfileTabContent(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.clickable{
                     // 跳转到更改头像界面
-                    navController.navigate(Routes.CHANGE_AVATAR)
+                    navController.navigate(Routes.changeAvatarWithId(id))
                 }
             )
         }
