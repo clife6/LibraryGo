@@ -34,7 +34,6 @@ class LoginViewModel() : ViewModel(){
     private val _formState = MutableStateFlow(LoginFormState())
     val formState = _formState.asStateFlow()
 
-    // 更新表单
     // 更新用户名
     fun updateUsername(username: String) {
         _formState.value = _formState.value.copy(username = username)

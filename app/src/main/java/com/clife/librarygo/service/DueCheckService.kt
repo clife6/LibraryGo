@@ -4,17 +4,32 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.util.Log
 import com.clife.librarygo.broadcasereceiver.DueCheckReceiver
 
 class DueCheckService : Service() {
     override fun onBind(intent: Intent?) = null
+
+    private var userId: String? = null
 
     private lateinit var alarmManager: AlarmManager
     private lateinit var pendingIntent: PendingIntent
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("DueCheckService", "Service created")
         setupDailyCheckAlarm()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        userId = intent?.getStringExtra("USER_ID")
+        Log.d("DueCheckService", "Service started with user ID: $userId")
+        return START_STICKY
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("DueCheckService", "Service destroyed")
     }
 
     private fun setupDailyCheckAlarm() {
