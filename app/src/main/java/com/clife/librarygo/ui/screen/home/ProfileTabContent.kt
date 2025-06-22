@@ -16,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -117,9 +119,10 @@ fun ProfileTabContent(
                 }
             )
         }
+
         Spacer(
             modifier = Modifier
-                .height(10.dp) // 需要指定高度，否则 Spacer 没有可见区域
+                .height(8.dp) // 需要指定高度，否则 Spacer 没有可见区域
         )
         Row(
             modifier = Modifier
@@ -154,7 +157,7 @@ fun ProfileTabContent(
 
         Spacer(
             modifier = Modifier
-                .height(10.dp)
+                .height(8.dp)
         )
         Row(
             modifier = Modifier
@@ -167,7 +170,7 @@ fun ProfileTabContent(
             Icon(
                 Icons.Default.Book,
                 contentDescription = "我的借阅",
-                tint = Color(0xFFFFD700)
+                tint = Color(0xFF00BCD4)
             )
             Spacer(modifier = Modifier.width(18.dp))
             Text(
@@ -185,7 +188,91 @@ fun ProfileTabContent(
                     home.selectTab(2)
                 }
             )
+        }
 
+        Spacer(
+            modifier = Modifier
+                .height(8.dp)
+        )
+        Row(
+            modifier = Modifier
+                .background(Color(0xFFFFFFFF))
+                .fillMaxWidth()
+                .padding(15.dp)
+                .height(25.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Icon(
+                Icons.Default.Book,
+                contentDescription = "借阅记录",
+                tint = Color(0xFF009688)
+            )
+            Spacer(modifier = Modifier.width(18.dp))
+            Text(
+                text = "借阅记录",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = "跳转借阅记录界面",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.clickable{
+                    // 跳转到借阅记录界面
+                }
+            )
+        }
+
+        Spacer(
+            modifier = Modifier
+                .height(8.dp)
+        )
+        Row(
+            modifier = Modifier
+                .background(Color(0xFFFFFFFF))
+                .fillMaxWidth()
+                .padding(15.dp)
+                .height(25.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Icon(
+                Icons.Default.Email,
+                contentDescription = "邮箱",
+                tint = Color(0xFFCDDC39)
+            )
+            Spacer(modifier = Modifier.width(18.dp))
+            userInfo?.let {
+                Text(
+                    text = it.email,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        // 分隔线
+        Spacer(modifier = Modifier.height(1.dp))
+        Row(
+            modifier = Modifier
+                .background(Color(0xFFFFFFFF))
+                .fillMaxWidth()
+                .padding(15.dp)
+                .height(25.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Icon(
+                Icons.Default.Phone,
+                contentDescription = "电话号码",
+                tint = Color(0xFFFF5722)
+            )
+            Spacer(modifier = Modifier.width(18.dp))
+            userInfo?.let {
+                Text(
+                    text = it.phone,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
@@ -202,7 +289,7 @@ fun ProfileTabContent(
 //            navController = rememberNavController(),
 //            paddingValues = PaddingValues(0.dp),
 //            "1",
-//
+//            home =
 //        )
 //    }
 //}
