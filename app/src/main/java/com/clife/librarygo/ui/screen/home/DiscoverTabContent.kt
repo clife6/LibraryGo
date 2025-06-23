@@ -146,7 +146,7 @@ fun DiscoverTabContent(
                                     id,
                                     book.uid.toString()
                                 )
-                            )
+                            ) { launchSingleTop = true }
                         },
                         shape = MaterialTheme.shapes.medium
                     ) {

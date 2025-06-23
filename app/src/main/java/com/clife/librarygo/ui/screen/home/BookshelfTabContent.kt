@@ -159,7 +159,7 @@ fun BookshelfTabContent(
                                             id,
                                             book.uid.toString()
                                         )
-                                    )
+                                    ) { launchSingleTop = true }
                                 }
                             ) {
                                 Row {
