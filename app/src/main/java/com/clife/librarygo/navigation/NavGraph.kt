@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.clife.librarygo.ui.screen.WelcomeCompose
+import com.clife.librarygo.ui.screen.home.BookCollectionCompose
 import com.clife.librarygo.ui.screen.home.BookDetailCompose
 import com.clife.librarygo.ui.screen.home.BorrowingRecordsCompose
 import com.clife.librarygo.ui.screen.home.ChangeAvatarCompose
@@ -95,6 +96,14 @@ fun LibraryNavGraph(
                 navController = navController,
                 id = id,
             )
+        }
+
+        composable(
+            "${Routes.COLLECTION}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            BookCollectionCompose(navController = navController, id = id)
         }
     }
 }

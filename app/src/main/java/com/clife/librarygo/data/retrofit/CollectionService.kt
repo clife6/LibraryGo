@@ -20,4 +20,9 @@ interface CollectionService {
     suspend fun updateCollection(
         @Body request: CollectionRequest.UpdateCollectionRequest
     ): Response<CollectionResponse.UpdateCollectionResponse>
+
+    @GET("/collection/getCollectionByUserId")
+    suspend fun getCollectionByUserId(
+        @Query("user_id") userId: String
+    ): Response<CollectionResponse.GetCollectionByUserIdResponse>
 }

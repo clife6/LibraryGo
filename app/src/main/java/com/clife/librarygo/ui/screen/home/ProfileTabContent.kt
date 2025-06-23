@@ -149,7 +149,8 @@ fun ProfileTabContent(
                 contentDescription = "查看收藏",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.clickable{
-                    /*跳转我的收藏界面*/
+                    // 跳转到收藏界面
+                    navController.navigate(Routes.collectionWithId(id))
                 }
             )
 
@@ -276,22 +277,12 @@ fun ProfileTabContent(
                 )
             }
         }
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage ?: "未知错误",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
     }
 }
-
-//@Preview(
-//    showBackground = true,
-//    showSystemUi = true
-//)
-//
-//@Composable
-//fun PreviewProfileTabContent() {
-//    LibraryGoTheme {
-//        ProfileTabContent(
-//            navController = rememberNavController(),
-//            paddingValues = PaddingValues(0.dp),
-//            "1",
-//            home =
-//        )
-//    }
-//}

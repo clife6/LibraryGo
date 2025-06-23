@@ -12,6 +12,7 @@ object Routes {
     const val BOOK_DETAIL = "book_detail"
     const val CHANGE_AVATAR = "change_avatar"
     const val BORROW_RECORD = "borrow_record"
+    const val COLLECTION = "collection"
 
 
     fun homeWithId(id: String) = "$HOME/$id"
@@ -19,4 +20,5 @@ object Routes {
     fun bookDetailWithIdAndUid(id: String, uid: String) = "$BOOK_DETAIL/$id/$uid"
     fun changeAvatarWithId(id: String) = "$CHANGE_AVATAR/$id"
     fun borrowingRecordsWithId(id: String) = "$BORROW_RECORD/$id"
+    fun collectionWithId(id: String) = "$COLLECTION/$id"
 }

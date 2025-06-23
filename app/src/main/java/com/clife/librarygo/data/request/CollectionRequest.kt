@@ -7,4 +7,8 @@ sealed class CollectionRequest {
         val bookUid: String,
         val isCollection: Boolean
     )
+
+    data class GetCollectionByUserIdRequest(
+        val userId: String
+    )
 }
