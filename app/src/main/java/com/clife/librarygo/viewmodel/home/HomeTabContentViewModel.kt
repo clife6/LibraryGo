@@ -14,8 +14,9 @@ class HomeTabContentViewModel: ViewModel()  {
     private var _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
+
     suspend fun getBooks(){
-        val response = RetrofitClient.bookService.getRandomBooks(8)
+        val response = RetrofitClient.bookService.getRandomBooks(9)
         if( response.isSuccessful && response.body() != null) {
             when (response.body()?.code) {
                 1 -> {
