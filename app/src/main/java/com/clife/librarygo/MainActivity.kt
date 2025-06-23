@@ -21,15 +21,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         ProcessLifecycleOwner.get().lifecycle.addObserver(
             object : DefaultLifecycleObserver {
-                @SuppressLint("ImplicitSamInstance")
-                override fun onStop(owner: LifecycleOwner) {
-                    super.onStop(owner)
-                    stopService(Intent(this@MainActivity, DueCheckService::class.java))
-                }
 
                 @SuppressLint("ImplicitSamInstance")
                 override fun onDestroy(owner: LifecycleOwner) {
                     super.onDestroy(owner)
+                    stopService(Intent(this@MainActivity, DueCheckService::class.java))
                     unregisterReceiver(DueCheckReceiver())
                 }
             }

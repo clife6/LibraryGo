@@ -1,5 +1,7 @@
 package com.clife.librarygo.ui.screen.home
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
@@ -44,11 +46,13 @@ fun HomeCompose(
 
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        val serviceIntent = Intent(context, DueCheckService::class.java).apply {
-            putExtra("USER_ID", id)
+    LaunchedEffect(id) {
+        if (!isServiceRunning(context, DueCheckService::class.java)) {
+            val serviceIntent = Intent(context, DueCheckService::class.java).apply {
+                putExtra("USER_ID", id)
+            }
+            context.startService(serviceIntent)
         }
-        context.startService(serviceIntent)
     }
 
     Scaffold(
@@ -87,27 +91,38 @@ fun HomeCompose(
         // 根据选中的标签显示不同的内容
         when (selectedTabIndex) {
             0 -> HomeTabContent(
-                paddingValues=contentPadding,
-                navController=navController,
-                id=id
+                paddingValues = contentPadding,
+                navController = navController,
+                id = id
             )
+
             1 -> DiscoverTabContent(
-                paddingValues=contentPadding,
-                navController=navController,
-                id=id
+                paddingValues = contentPadding,
+                navController = navController,
+                id = id
             )
+
             2 -> BookshelfTabContent(
-                paddingValues=contentPadding,
-                navController=navController,
-                id=id
+                paddingValues = contentPadding,
+                navController = navController,
+                id = id
             )
+
             3 -> ProfileTabContent(
-                paddingValues=contentPadding,
-                navController=navController,
-                id=id,
+                paddingValues = contentPadding,
+                navController = navController,
+                id = id,
                 home = viewModel
             )
         }
+    }
+}
+
+@Suppress("DEPRECATION")
+fun isServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+    val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    return manager.getRunningServices(Integer.MAX_VALUE).any {
+        it.service.className == serviceClass.name
     }
 }
 
