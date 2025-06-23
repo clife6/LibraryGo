@@ -31,4 +31,11 @@ sealed class BorrowResponse {
         val message: String? = null,
         val error: String? = null,
     )
+
+    data class CountBorrowByUserIdResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+        val borrowCount: Int? = null
+    )
 }

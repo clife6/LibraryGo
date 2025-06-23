@@ -33,4 +33,10 @@ interface BorrowService {
     suspend fun deleteBorrowRecord(
         @Body request: BorrowRequest.DeleteBorrowRecordRequest
     ): Response<BorrowResponse.DeleteBorrowRecordResponse>
+
+    // 查询借阅记录数量
+    @GET("/borrow/countBorrowByUserId")
+    suspend fun countBorrowByUserId(
+        @Query("user_id") userId: String,
+    ): Response<BorrowResponse.CountBorrowByUserIdResponse>
 }
