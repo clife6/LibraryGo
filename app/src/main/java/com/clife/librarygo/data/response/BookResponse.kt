@@ -26,4 +26,12 @@ sealed class BookResponse {
         val error: String? = null,
         val book: Book.BookDetail? = null
     )
+
+    //随机获取图书信息
+    data class RandomBooksResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+        val books: List<Book.BookInSearch>? = null
+    )
 }

@@ -12,7 +12,6 @@ interface BookService {
         @Query("keyword") keyword: String,
     ): Response<BookResponse.SearchBookResponse>
 
-
     // 查询图书信息通过书籍Uid
     @GET("/book/searchBookByUid")
     suspend fun searchBookByUid(
@@ -24,4 +23,10 @@ interface BookService {
     suspend fun searchBookDetailByUid(
         @Query("uid") uid: String,
     ): Response<BookResponse.SearchBookDetailByUidResponse>
+
+    //随机获取图书信息
+    @GET("/book/getRandomBooks")
+    suspend fun getRandomBooks(
+        @Query("count") count: Int = 8, // 默认获取10本随机图书
+    ): Response<BookResponse.RandomBooksResponse>
 }
