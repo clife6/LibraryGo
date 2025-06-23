@@ -22,4 +22,11 @@ sealed class BorrowRecordResponse {
         val error: String? = null,
         val borrowRecord: BorrowRecord.SearchBorrowRecord? = null
     )
+
+    data class BorrowingRecordsResponse(
+        val code: Int,
+        val message: String? = null,
+        val error: String? = null,
+        val borrowRecords: List<BorrowRecord.BorrowingRecord> = emptyList()
+    )
 }

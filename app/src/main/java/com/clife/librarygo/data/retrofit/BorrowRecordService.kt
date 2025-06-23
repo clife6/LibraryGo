@@ -28,4 +28,10 @@ interface BorrowRecordService {
         @Query("book_uid") bookUid: String,
         @Query("user_id") userId: String,
     ): Response<BorrowRecordResponse.SearchBorrowRecordResponse>
+
+    // 根据用户id查询所有借阅记录
+    @GET("/borrowRecord/searchBorrowRecordsByUserId")
+    suspend fun searchBorrowRecordsByUserId(
+        @Query("user_id") userId: String,
+    ): Response<BorrowRecordResponse.BorrowingRecordsResponse>
 }

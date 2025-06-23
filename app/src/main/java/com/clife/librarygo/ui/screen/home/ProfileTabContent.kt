@@ -219,7 +219,9 @@ fun ProfileTabContent(
                 contentDescription = "跳转借阅记录界面",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.clickable{
-                    // 跳转到借阅记录界面
+                    navController.navigate(
+                        Routes.borrowingRecordsWithId(id)
+                    )
                 }
             )
         }

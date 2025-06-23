@@ -6,12 +6,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.clife.librarygo.ui.screen.login.AdminLoginCompose
-import com.clife.librarygo.ui.screen.login.LoginCompose
 import com.clife.librarygo.ui.screen.WelcomeCompose
 import com.clife.librarygo.ui.screen.home.BookDetailCompose
+import com.clife.librarygo.ui.screen.home.BorrowingRecordsCompose
 import com.clife.librarygo.ui.screen.home.ChangeAvatarCompose
 import com.clife.librarygo.ui.screen.home.HomeCompose
+import com.clife.librarygo.ui.screen.login.AdminLoginCompose
+import com.clife.librarygo.ui.screen.login.LoginCompose
 import com.clife.librarygo.ui.screen.login.RegisterCompose
 import com.clife.librarygo.ui.screen.login.RetrievePasswordCompose
 import com.clife.librarygo.ui.screen.login.SetNewPasswordCompose
@@ -83,6 +84,16 @@ fun LibraryNavGraph(
             ChangeAvatarCompose(
                 navController = navController,
                 id = id
+            )
+        }
+        composable(
+            "${Routes.BORROW_RECORD}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            BorrowingRecordsCompose(
+                navController = navController,
+                id = id,
             )
         }
     }
