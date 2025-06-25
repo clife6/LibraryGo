@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL = "http://10.10.16.12:5050/"
+    private const val BASE_URL = "#"
 
 
     private val okHttpClient: OkHttpClient by lazy {
