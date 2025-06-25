@@ -1,6 +1,7 @@
 package com.clife.librarygo.ui.screen.home
 
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,13 +20,18 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +44,7 @@ import com.clife.librarygo.R
 import com.clife.librarygo.navigation.Routes
 import com.clife.librarygo.viewmodel.home.HomeViewModel
 import com.clife.librarygo.viewmodel.home.ProfileTabContentViewModel
+
 
 @Composable
 fun ProfileTabHeader(
@@ -277,6 +284,49 @@ fun ProfileTabContent(
                 )
             }
         }
+
+        var showDialog by remember { mutableStateOf(false) }
+        val activity = LocalActivity.current
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier
+                .background(Color(0xFFFFFFFF))
+                .fillMaxWidth()
+                .padding(15.dp)
+                .height(40.dp)
+                .clickable { showDialog = true },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "退出",
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("确认退出") },
+                text = { Text("确定要退出应用吗？") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        showDialog = false
+                        activity?.finishAffinity()
+                    }) {
+                        Text("是")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("否")
+                    }
+                }
+            )
+        }
+
         if (errorMessage != null) {
             Text(
                 text = errorMessage ?: "未知错误",
