@@ -22,8 +22,6 @@ LibraryGo 是一个使用 Kotlin 和 Jetpack Compose 开发的 Android 图书借
 | 状态管理 | ViewModel、StateFlow，管理表单与页面数据 |
 | 异步与事件 | Kotlin Coroutines、SharedFlow，处理网络请求与导航事件 |
 | 网络通信 | Retrofit、OkHttp、Gson，定义接口并解析响应 |
-| 图片加载 | Coil |
-| 系统能力 | Service、BroadcastReceiver、AlarmManager、通知、MediaStore |
 
 ## 项目结构
 
