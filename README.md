@@ -12,6 +12,20 @@ LibraryGo 是一个使用 Kotlin 和 Jetpack Compose 开发的 Android 图书借
 - **收藏管理**：收藏、取消收藏及查看收藏列表。
 - **借阅提醒**：通过 Service、AlarmManager 和 BroadcastReceiver 查询当前借阅数量并展示本地通知。
 
+## 界面演示
+
+### 图书浏览
+
+| 首页 | 图书搜索 | 图书详情 |
+| --- | --- | --- |
+| ![展示轮播和图书推荐的首页](docs/screenshots/home.jpg) | ![图书搜索结果](docs/screenshots/search.jpg) | ![展示图书简介及收藏、还书入口的详情页](docs/screenshots/book-details.jpg) |
+
+### 借阅与收藏
+
+| 我的书架 | 我的收藏 | 借阅记录 |
+| --- | --- | --- |
+| ![书架中的当前借阅图书](docs/screenshots/bookshelf.jpg) | ![已收藏的图书列表](docs/screenshots/favorites.jpg) | ![显示借阅日期、应还日期和归还状态的记录](docs/screenshots/borrow-history.jpg) |
+
 ## 技术栈
 
 | 类别 | 技术与用途 |
